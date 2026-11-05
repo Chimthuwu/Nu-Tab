@@ -5,8 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="dark">
   <meta name="darkreader-lock">
-  <title>aesthetic new tab · Sydney</title>
+  <title>New Tab</title>
   
+  <!-- Social Media Meta Tags (Open Graph & Twitter) -->
+  <meta property="og:title" content="Aesthetic New Tab">
+  <meta property="og:description" content="A sleek, fully customizable Bento-style dashboard for your browser. Includes weather, local time, search, and AI shortcuts.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop"> <!-- Replace with your screenshot later! -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Aesthetic New Tab">
+  <meta name="twitter:description" content="A sleek, fully customizable Bento-style dashboard for your browser.">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -19,7 +28,6 @@
       box-sizing: border-box;
     }
 
-    /* Preserve the authored dark palette; opt out of browser light/dark auto-recolouring. */
     html {
       color-scheme: dark;
       background-color: #0a0b10 !important;
@@ -40,7 +48,7 @@
     }
 
     body {
-      min-height: 100vh;
+      height: 100dvh;
       background:
         radial-gradient(ellipse at 50% -10%, #2b2a4a 0%, transparent 60%),
         radial-gradient(ellipse at 100% 100%, #0f1e2b 0%, transparent 50%),
@@ -50,7 +58,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 1rem;
+      padding: 1vmin;
       overflow: hidden; 
       position: relative;
       transition: background 0.3s;
@@ -61,7 +69,7 @@
       background: #000000 !important;
     }
 
-    body.blackout-mode .container, body.blackout-mode #stealth-widget {
+    body.blackout-mode .container, body.blackout-mode #stealth-widget, body.blackout-mode #settings-btn {
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.3s;
@@ -129,58 +137,16 @@
     /* ----- MAIN CONTAINER ----- */
     .container {
       width: 100%;
-      max-width: 960px;
+      max-width: min(1100px, 98vw);
       text-align: center;
       position: relative;
       z-index: 2;
       transition: opacity 0.3s;
-    }
-
-    /* ----- GREETING ----- */
-    #greeting {
-      color: var(--accent-soft);
-      font-size: 0.8rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      margin-bottom: 0.1rem;
-      font-weight: 500;
-      opacity: 0.8;
-      animation: fadeUp 0.7s ease both;
-    }
-
-    /* ----- CLOCK ----- */
-    .clock {
-      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-size: clamp(3.5rem, 8vw, 5rem);
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      line-height: 1;
-      margin-bottom: 0.1rem;
-
-      background: linear-gradient(115deg, #ffffff, #c8c0ff, #9488ff, #8ad2ff, #ffffff);
-      background-size: 300% auto;
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-
-      animation: shimmer 9s linear infinite, fadeUp 0.8s ease both;
-      text-shadow: 0 0 20px rgba(139, 124, 255, 0.2);
-    }
-
-    @keyframes shimmer {
-      0%   { background-position: 0% center; }
-      100% { background-position: 300% center; }
-    }
-
-    .date {
-      color: var(--text-muted);
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      margin-bottom: 0.8rem;
-      font-weight: 400;
-      opacity: 0.9;
-      animation: fadeUp 0.9s 0.1s ease both;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      justify-content: center;
+      gap: 1.5vmin;
     }
 
     /* ----- WEATHER CARD ----- */
@@ -188,19 +154,20 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 1.8rem;
-      padding: 1rem 2.5rem;
-      margin-bottom: 1.2rem;
+      gap: 2vmin;
+      padding: 1.5vmin 3vmin;
+      margin: 0 auto;
 
       background: rgba(20, 24, 38, 0.6);
       border: 1px solid var(--card-border);
-      border-radius: 2.5rem;
+      border-radius: 3vmin;
       backdrop-filter: var(--glass-blur);
       -webkit-backdrop-filter: var(--glass-blur);
       box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.02) inset;
 
       animation: fadeUp 1s 0.15s ease both;
       transition: box-shadow 0.3s, transform 0.2s;
+      cursor: pointer;
     }
 
     .weather:hover {
@@ -212,7 +179,7 @@
     }
 
     .weather-icon {
-      font-size: 2.5rem;
+      font-size: clamp(1.8rem, 4vmin, 3rem);
       filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
     }
 
@@ -221,31 +188,31 @@
     }
 
     .temperature {
-      font-size: 2rem;
+      font-size: clamp(1.2rem, 3vmin, 2rem);
       font-weight: 650;
       letter-spacing: -0.02em;
     }
 
     .conditions {
-      font-size: 0.9rem;
+      font-size: clamp(0.7rem, 1.5vmin, 1rem);
       color: var(--text-muted);
-      margin-top: 0.2rem;
+      margin-top: 0.2vmin;
       font-weight: 400;
     }
 
     .weather-location {
       color: var(--accent-soft);
-      font-size: 0.7rem;
+      font-size: clamp(0.6rem, 1.2vmin, 0.8rem);
       letter-spacing: 0.12em;
-      margin-top: 0.2rem;
+      margin-top: 0.2vmin;
       font-weight: 500;
     }
 
     .weather-extra {
       border-left: 1px solid rgba(255, 255, 255, 0.08);
-      padding-left: 1.8rem;
+      padding-left: 2vmin;
       text-align: left;
-      font-size: 0.8rem;
+      font-size: clamp(0.7rem, 1.5vmin, 0.9rem);
       line-height: 1.9;
       color: var(--text-muted);
     }
@@ -253,15 +220,65 @@
     .weather-extra strong {
       color: var(--text-primary);
       font-weight: 500;
-      margin-left: 0.3rem;
+      margin-left: 0.3vmin;
+    }
+
+    /* Clock inside Weather Card */
+    .weather-clock {
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+      padding-left: 3vmin;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .clock {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: clamp(2.2rem, 5vmin, 3.5rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      background: linear-gradient(115deg, #ffffff, #c8c0ff, #9488ff, #8ad2ff, #ffffff);
+      background-size: 300% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shimmer 9s linear infinite;
+      text-shadow: 0 0 20px rgba(139, 124, 255, 0.2);
+      text-align: right;
+      margin-bottom: 0.4vmin;
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: 0% center; }
+      100% { background-position: 300% center; }
+    }
+
+    .date {
+      color: var(--text-muted);
+      font-size: clamp(0.55rem, 1.2vmin, 0.8rem);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 500;
+      opacity: 0.9;
+      text-align: right;
     }
 
     /* ----- ADVANCED SEARCH BAR & DROPDOWN ----- */
-    .search-wrapper {
+    .search-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1vmin;
       width: 100%;
-      max-width: 580px;
-      margin: 0 auto 1.5rem;
+      max-width: 80vmin;
+      margin: 0 auto;
       animation: fadeUp 0.9s 0.2s ease both;
+    }
+
+    .search-wrapper {
+      flex: 1;
       position: relative;
       z-index: 50; 
     }
@@ -271,14 +288,15 @@
       align-items: center;
       background: rgba(14, 16, 26, 0.6);
       border: 2px solid rgba(139, 124, 255, 0.3);
-      border-radius: 3rem;
-      padding: 0.4rem 0.4rem 0.4rem 1.2rem;
+      border-radius: 4vmin;
+      padding: 0.5vmin 0.5vmin 0.5vmin 2vmin;
       backdrop-filter: var(--glass-blur);
       -webkit-backdrop-filter: var(--glass-blur);
       transition: border-color 0.25s, box-shadow 0.3s, background 0.2s;
       box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.4);
       position: relative;
       z-index: 51;
+      height: 100%;
     }
 
     .search-form:focus-within {
@@ -292,10 +310,10 @@
       background: transparent;
       border: none;
       color: white;
-      font-size: 0.95rem;
+      font-size: clamp(0.85rem, 1.8vmin, 1.1rem);
       font-weight: 400;
       outline: none;
-      padding: 0.5rem 0;
+      padding: 1vmin 0;
     }
 
     .search-form input::placeholder {
@@ -303,10 +321,36 @@
       font-weight: 300;
     }
 
+    /* Small Buttons next to search */
+    .action-btn {
+      background: rgba(14, 16, 26, 0.6);
+      border: 2px solid rgba(139, 124, 255, 0.3);
+      border-radius: 4vmin;
+      width: 8vmin;
+      height: 8vmin;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 2.5vmin;
+      color: white;
+      transition: all 0.25s;
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.4);
+      flex-shrink: 0;
+    }
+
+    .action-btn:hover {
+      background: rgba(139, 124, 255, 0.2);
+      border-color: var(--accent-soft);
+      transform: scale(1.05);
+    }
+
     /* Custom Dropdown Container */
     .dropdown-container {
       position: relative;
-      margin-right: 0.2rem;
+      margin-right: 0.2vmin;
     }
 
     .search-engine-btn {
@@ -314,14 +358,14 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       color: var(--accent-soft);
       font-family: 'Outfit', sans-serif;
-      font-size: 0.85rem;
+      font-size: clamp(0.75rem, 1.5vmin, 1rem);
       font-weight: 600;
-      padding: 0.6rem 1.2rem;
-      border-radius: 2rem;
+      padding: 1vmin 2.5vmin;
+      border-radius: 3vmin;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 1vmin;
       transition: background 0.2s, color 0.2s;
     }
 
@@ -334,16 +378,16 @@
     .dropdown-menu {
       display: none;
       position: absolute;
-      top: calc(100% + 10px);
+      top: calc(100% + 1vmin);
       right: 0;
       background: rgba(18, 21, 33, 0.98);
       border: 1px solid var(--card-border);
-      border-radius: 1rem;
-      padding: 0.5rem;
-      min-width: 150px;
+      border-radius: 2vmin;
+      padding: 1vmin;
+      min-width: 20vmin;
       box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.8);
       flex-direction: column;
-      gap: 0.2rem;
+      gap: 0.5vmin;
       transform-origin: top right;
       animation: dropdownOpen 0.2s ease both;
       z-index: 60;
@@ -354,10 +398,10 @@
     }
 
     .dropdown-item {
-      padding: 0.6rem 1rem;
-      border-radius: 0.6rem;
+      padding: 1vmin 2vmin;
+      border-radius: 1vmin;
       cursor: pointer;
-      font-size: 0.85rem;
+      font-size: clamp(0.75rem, 1.5vmin, 1rem);
       color: var(--text-primary);
       font-weight: 500;
       transition: background 0.2s, color 0.2s;
@@ -378,16 +422,16 @@
     .slash-menu {
       display: none;
       position: absolute;
-      top: calc(100% + 10px);
+      top: calc(100% + 1vmin);
       left: 0;
       width: 100%;
       background: rgba(18, 21, 33, 0.98);
       border: 1px solid var(--card-border);
-      border-radius: 1rem;
-      padding: 0.5rem;
+      border-radius: 2vmin;
+      padding: 1vmin;
       box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.8);
       flex-direction: column;
-      gap: 0.2rem;
+      gap: 0.5vmin;
       z-index: 60;
       transform-origin: top center;
       animation: dropdownOpen 0.2s ease both;
@@ -400,11 +444,11 @@
     .slash-item {
       display: flex;
       align-items: center;
-      gap: 0.8rem;
-      padding: 0.7rem 1rem;
-      border-radius: 0.6rem;
+      gap: 2vmin;
+      padding: 1.5vmin 2vmin;
+      border-radius: 1vmin;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: clamp(0.8rem, 1.8vmin, 1.1rem);
       color: var(--text-primary);
       transition: background 0.2s;
       text-align: left;
@@ -416,12 +460,12 @@
 
     .slash-item span.cmd {
       background: rgba(255,255,255,0.1);
-      padding: 0.2rem 0.5rem;
-      border-radius: 0.4rem;
+      padding: 0.5vmin 1.5vmin;
+      border-radius: 1vmin;
       font-family: monospace;
-      font-size: 0.8rem;
+      font-size: clamp(0.7rem, 1.5vmin, 0.9rem);
       color: var(--accent-soft);
-      min-width: 65px;
+      min-width: 12vmin;
       text-align: center;
     }
 
@@ -429,32 +473,34 @@
     .dashboard-container {
       display: flex;
       flex-direction: column;
-      gap: 0.8rem;
-      max-width: 850px;
+      gap: 1.5vmin;
+      width: 100%;
       margin: auto;
       animation: fadeUp 1s 0.3s ease both;
       text-align: left;
+      flex-shrink: 0;
     }
 
     .dashboard-row {
       display: flex;
-      gap: 0.8rem;
+      gap: 1.5vmin;
       align-items: stretch;
+      justify-content: center;
     }
 
     .category-group {
       background: rgba(18, 21, 33, 0.4);
       border: 1px solid rgba(255, 255, 255, 0.03);
-      border-radius: 1.2rem;
-      padding: 0.8rem;
+      border-radius: 2vmin;
+      padding: 1.5vmin;
       display: flex;
       flex-direction: column;
-      gap: 0.6rem;
+      gap: 1.5vmin;
     }
 
     .category-title {
       color: var(--text-muted);
-      font-size: 0.6rem;
+      font-size: clamp(0.6rem, 1.2vmin, 0.8rem);
       letter-spacing: 0.15em;
       text-transform: uppercase;
       font-weight: 600;
@@ -464,7 +510,7 @@
     .tile-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 0.6rem;
+      gap: 1.2vmin;
       height: 100%;
       align-content: start;
     }
@@ -472,27 +518,27 @@
     /* ----- MAIL SHRUNK STRIP ----- */
     .mail-group {
       width: 100%;
-      padding: 0.6rem 1rem;
+      padding: 1vmin 2vmin;
     }
     .mail-group .tile-grid {
       grid-template-columns: repeat(3, 1fr);
     }
     .mail-group .tile {
-      padding: 0.5rem 0.4rem;
+      padding: 1vmin 0.5vmin;
       flex-direction: row;
       justify-content: center;
-      gap: 0.8rem;
+      gap: 1.5vmin;
     }
     .mail-group .icon {
-      width: 2rem;
-      height: 2rem;
+      width: 3.5vmin;
+      height: 3.5vmin;
     }
     .mail-group .icon img {
-      width: 1.2rem;
-      height: 1.2rem;
+      width: 2vmin;
+      height: 2vmin;
     }
     .mail-group .tile span {
-      font-size: 0.75rem;
+      font-size: clamp(0.7rem, 1.4vmin, 0.9rem);
     }
 
     /* ----- BOTTOM GROUPS ----- */
@@ -508,20 +554,20 @@
       backdrop-filter: var(--glass-blur);
       -webkit-backdrop-filter: var(--glass-blur);
       border: 1px solid var(--card-border);
-      border-radius: 0.9rem;
-      padding: 0.8rem 0.4rem;
+      border-radius: 1.5vmin;
+      padding: 1.5vmin 0.5vmin;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 0.4rem;
+      gap: 1vmin;
       transition: transform var(--transition-smooth), background 0.25s, border-color 0.25s, box-shadow 0.3s;
       box-shadow: 0 8px 16px -8px rgba(0, 0, 0, 0.5);
       height: 100%;
     }
 
     .tile:hover {
-      transform: translateY(-3px);
+      transform: translateY(-0.5vmin);
       background: rgba(28, 32, 52, 0.85);
       border-color: rgba(169, 156, 255, 0.4);
       box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(169, 156, 255, 0.2) inset;
@@ -534,16 +580,16 @@
     }
 
     .icon {
-      width: 2.4rem;
-      height: 2.4rem;
-      border-radius: 0.7rem;
+      width: 4.5vmin;
+      height: 4.5vmin;
+      border-radius: 1.2vmin;
       display: flex;
       align-items: center;
       justify-content: center;
       background: rgba(32, 36, 56, 0.7);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
       transition: background 0.2s, transform 0.3s ease;
-      font-size: 1.2rem;
+      font-size: 2.2vmin;
     }
 
     .tile:hover .icon {
@@ -552,8 +598,8 @@
     }
 
     .icon img {
-      width: 1.4rem;
-      height: 1.4rem;
+      width: 2.5vmin;
+      height: 2.5vmin;
       object-fit: contain;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
     }
@@ -561,45 +607,24 @@
     .icon-text {
       font-weight: 700;
       font-family: 'Outfit', sans-serif;
-      font-size: 0.95rem;
+      font-size: clamp(0.8rem, 2vmin, 1.2rem);
       letter-spacing: -0.5px;
     }
-    .brand-mark { width: 1.75rem; height: 1.75rem; display: block; flex: 0 0 auto; overflow: visible; }
-    .mail-group .brand-mark { width: 1.45rem; height: 1.45rem; }
-/* Scalable font size for tile text to keep it readable on zoom out */
+
+    /* Scalable font size for tile text */
     .tile span {
-      font-size: clamp(0.6rem, 1.5vw, 0.8rem);
+      font-size: clamp(0.7rem, 1.5vmin, 1rem);
       font-weight: 500;
       letter-spacing: 0.2px;
       color: #e6e9f5;
       text-align: center;
     }
 
-    /* Blackout specific */
-    .blackout-tile {
-      width: 100%;
-      flex-direction: row;
-      justify-content: center;
-      gap: 1rem;
-      padding: 0.8rem;
-      background: rgba(40, 44, 70, 0.5);
-    }
-    
-    .blackout-tile .icon {
-      width: 2rem;
-      height: 2rem;
-    }
-    
-    .blackout-tile span {
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-
     /* ----- FOOTER ----- */
     .footer {
-      margin-top: 1rem;
+      margin-top: 2vmin;
       color: #4a4f64;
-      font-size: 0.55rem;
+      font-size: clamp(0.5rem, 1vmin, 0.7rem);
       letter-spacing: 0.3em;
       font-weight: 400;
       animation: fadeUp 1.1s 0.35s ease both;
@@ -611,20 +636,20 @@
       100% { opacity: 1; transform: translateY(0); }
     }
 
-    /* ----- STEALTH WIDGET (FIXED TOP LEFT) ----- */
+    /* ----- STEALTH WIDGET ----- */
     #stealth-widget {
       position: fixed;
-      top: 1.5rem;
-      left: 1.5rem;
+      top: 2vmin;
+      left: 2vmin;
       background: rgba(18, 21, 33, 0.95);
       backdrop-filter: var(--glass-blur);
       -webkit-backdrop-filter: var(--glass-blur);
       border: 1px solid var(--card-border);
-      border-radius: 1rem;
-      padding: 0.8rem 1rem;
+      border-radius: 1.5vmin;
+      padding: 1.2vmin 2vmin;
       box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
       z-index: 100;
-      max-width: 350px;
+      max-width: 40vmin;
       transition: all 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
       display: flex;
       flex-direction: column;
@@ -638,14 +663,14 @@
     .widget-header {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      gap: 1.2vmin;
       user-select: none;
-      cursor: pointer; /* Crucial for clickable feel */
+      cursor: pointer;
     }
 
     .widget-dot {
-      width: 8px;
-      height: 8px;
+      width: 1vmin;
+      height: 1vmin;
       border-radius: 50%;
       background: var(--accent-soft);
       transition: background 0.3s;
@@ -664,14 +689,14 @@
     }
 
     .widget-title {
-      font-size: 0.75rem;
+      font-size: clamp(0.7rem, 1.5vmin, 0.9rem);
       font-weight: 600;
       color: var(--text-primary);
       letter-spacing: 0.05em;
       text-transform: uppercase;
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 1vmin;
     }
 
     .chevron {
@@ -683,15 +708,14 @@
       transform: rotate(180deg);
     }
 
-    /* Content is hidden by default, shown when .expanded is added */
     .widget-content {
       display: none;
-      margin-top: 0.8rem;
+      margin-top: 1.5vmin;
       flex-direction: column;
-      gap: 0.6rem;
+      gap: 1.5vmin;
       border-top: 1px solid rgba(255,255,255,0.08);
-      padding-top: 0.8rem;
-      max-height: 400px;
+      padding-top: 1.5vmin;
+      max-height: 40vh;
       overflow-y: auto;
     }
 
@@ -700,7 +724,7 @@
     }
 
     .stealth-item {
-      font-size: 0.75rem;
+      font-size: clamp(0.65rem, 1.3vmin, 0.85rem);
       line-height: 1.4;
       color: var(--text-primary);
     }
@@ -709,12 +733,12 @@
       color: var(--text-primary);
       font-weight: 600;
       display: block;
-      margin-bottom: 0.1rem;
+      margin-bottom: 0.2vmin;
     }
 
     .stealth-desc {
       color: var(--text-muted);
-      font-size: 0.65rem;
+      font-size: clamp(0.6rem, 1.1vmin, 0.75rem);
       display: block;
     }
 
@@ -722,11 +746,11 @@
       display: inline-block;
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.1);
-      padding: 0.1rem 0.4rem;
-      border-radius: 0.4rem;
-      font-size: 0.6rem;
+      padding: 0.2vmin 1vmin;
+      border-radius: 1vmin;
+      font-size: clamp(0.55rem, 1vmin, 0.7rem);
       color: var(--accent-soft);
-      margin-top: 0.2rem;
+      margin-top: 0.5vmin;
       font-weight: 600;
     }
 
@@ -734,14 +758,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.4rem;
-      margin-top: 0.25rem;
-      padding: 0.48rem 0.7rem;
+      gap: 1vmin;
+      margin-top: 0.5vmin;
+      padding: 1vmin 1.5vmin;
       border: 1px solid rgba(0, 209, 255, 0.28);
-      border-radius: 0.55rem;
+      border-radius: 1vmin;
       background: rgba(0, 209, 255, 0.08);
       color: var(--accent-soft);
-      font-size: 0.68rem;
+      font-size: clamp(0.6rem, 1.2vmin, 0.8rem);
       font-weight: 650;
       letter-spacing: 0.025em;
       text-decoration: none;
@@ -754,13 +778,217 @@
       transform: translateY(-1px);
     }
     .stealth-site-link svg {
-      width: 0.8rem;
-      height: 0.8rem;
+      width: 1.5vmin;
+      height: 1.5vmin;
       flex: 0 0 auto;
     }
 
+    /* ----- SETTINGS GEAR & MODAL (Redesigned) ----- */
+    #settings-btn {
+      position: fixed;
+      top: 2vmin;
+      right: 2vmin;
+      background: rgba(18, 21, 33, 0.95);
+      border: 1px solid var(--card-border);
+      border-radius: 50%;
+      width: 4.5vmin;
+      height: 4.5vmin;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 2.2vmin;
+      transition: all 0.3s;
+      z-index: 100;
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    #settings-btn:hover {
+      color: var(--text-primary);
+      border-color: var(--accent-soft);
+      transform: rotate(90deg);
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-content {
+      background: rgba(18, 21, 33, 0.98);
+      border: 1px solid var(--card-border);
+      border-radius: 1.5rem;
+      width: 95%;
+      max-width: 800px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      transform: translateY(20px);
+      transition: transform 0.3s;
+      overflow: hidden;
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 2rem;
+      cursor: pointer;
+      transition: color 0.2s;
+      line-height: 1;
+    }
+
+    .close-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      padding: 2rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+
+    .settings-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .settings-group h3 {
+      font-size: 1.1rem;
+      color: var(--accent-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding-bottom: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .input-group label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .input-group input {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 0.5rem;
+      padding: 0.8rem 1rem;
+      color: white;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-group input:focus {
+      border-color: var(--accent-soft);
+    }
+
+    /* Custom Shortcut List */
+    .shortcut-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 0.8rem;
+      align-items: center;
+    }
+
+    .shortcut-grid-header {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding-bottom: 0.5rem;
+    }
+
+    .modal-footer {
+      padding: 1.5rem 2rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    .save-btn {
+      background: var(--accent-soft);
+      color: #000;
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      font-size: 1rem;
+    }
+
+    .save-btn:hover {
+      background: #b8b0ff;
+      transform: scale(1.02);
+    }
+    
+    .cancel-btn {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 0.8rem 2rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-size: 1rem;
+    }
+
+    .cancel-btn:hover {
+      background: rgba(255,255,255,0.05);
+    }
+
     /* ----- RESPONSIVE ----- */
-    @media (max-width: 800px) {
+    @media (max-aspect-ratio: 1/1) {
       .dashboard-row {
         flex-direction: column;
       }
@@ -772,37 +1000,40 @@
       }
       body { overflow: auto; }
       
-      #stealth-widget {
+      #stealth-widget, #settings-btn {
         top: 1rem;
         left: 1rem;
-        right: 1rem;
+        right: auto;
         max-width: none;
       }
+      #settings-btn {
+        left: auto;
+        right: 1rem;
+      }
     }
-  
+
     .icon img.custom-brand-icon {
-      width: 1.85rem;
-      height: 1.85rem;
+      width: 2.5vmin;
+      height: 2.5vmin;
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
-      border-radius: 0.35rem;
+      border-radius: 0.5vmin;
       filter: none;
       display: block;
     }
 
-  
     .icon > img.custom-brand-icon {
       display: block !important;
       visibility: visible;
       opacity: 1;
-      width: 1.85rem !important;
-      height: 1.85rem !important;
-      min-width: 1.85rem;
-      min-height: 1.85rem;
+      width: 2.5vmin !important;
+      height: 2.5vmin !important;
+      min-width: 2.5vmin;
+      min-height: 2.5vmin;
       object-fit: contain;
-      flex: 0 0 1.85rem;
-      border-radius: 0.35rem;
+      flex: 0 0 2.5vmin;
+      border-radius: 0.5vmin;
       filter: none !important;
     }
 
@@ -814,7 +1045,12 @@
     <div class="hint">double-click anywhere to exit</div>
   </div>
 
-  <!-- STEALTH WIDGET (Standard DIV with JS Toggle) -->
+  <!-- SETTINGS GEAR -->
+  <button id="settings-btn" onclick="openSettings()" title="Settings">
+    ⚙️
+  </button>
+
+  <!-- STEALTH WIDGET -->
   <div id="stealth-widget">
     <div class="widget-header" onclick="toggleWidget(event)">
       <div class="widget-dot"></div>
@@ -824,7 +1060,7 @@
       </div>
     </div>
     <div class="widget-content" id="stealth-list">
-      <!-- HARDCODED FALLBACK so it ALWAYS shows something -->
+      <!-- HARDCODED FALLBACK -->
       <div class="stealth-item">
         <span class="stealth-name">Crouton Alpha</span>
         <span class="stealth-desc">A free stealth model with a 1M token context and multimodal input.</span>
@@ -843,94 +1079,219 @@
     </div>
   </div>
 
+  <!-- SETTINGS MODAL (Redesigned) -->
+  <div class="modal-overlay" id="settings-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Settings</h2>
+        <button class="close-btn" onclick="closeSettings()">×</button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="settings-group">
+          <h3>Location</h3>
+          <div class="input-group">
+            <label>City Name (e.g. London, New York, Tokyo)</label>
+            <input type="text" id="set-city" placeholder="Enter your city...">
+            <small style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.2rem;">
+              We will automatically detect your coordinates to show the right weather.
+            </small>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <h3>Customize Shortcuts</h3>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">Change the name and URL for any button on your dashboard.</p>
+          
+          <div class="shortcut-grid">
+            <div class="shortcut-grid-header">Name</div>
+            <div class="shortcut-grid-header">URL</div>
+            
+            <!-- Mail -->
+            <input type="text" id="name-gmail" placeholder="Gmail">
+            <input type="url" id="url-gmail" placeholder="https://...">
+            
+            <input type="text" id="name-outlook" placeholder="Outlook">
+            <input type="url" id="url-outlook" placeholder="https://...">
+            
+            <input type="text" id="name-proton" placeholder="ProtonMail">
+            <input type="url" id="url-proton" placeholder="https://...">
+
+            <!-- General -->
+            <input type="text" id="name-youtube" placeholder="YouTube">
+            <input type="url" id="url-youtube" placeholder="https://...">
+            
+            <input type="text" id="name-reddit" placeholder="Reddit">
+            <input type="url" id="url-reddit" placeholder="https://...">
+            
+            <input type="text" id="name-soundcloud" placeholder="SoundCloud">
+            <input type="url" id="url-soundcloud" placeholder="https://...">
+            
+            <input type="text" id="name-discord" placeholder="Discord">
+            <input type="url" id="url-discord" placeholder="https://...">
+            
+            <input type="text" id="name-twitch" placeholder="Twitch">
+            <input type="url" id="url-twitch" placeholder="https://...">
+            
+            <input type="text" id="name-steam" placeholder="Steam">
+            <input type="url" id="url-steam" placeholder="https://...">
+            
+            <input type="text" id="name-railscope" placeholder="Railscope">
+            <input type="url" id="url-railscope" placeholder="https://...">
+            
+            <input type="text" id="name-psydechat" placeholder="Psydechat">
+            <input type="url" id="url-psydechat" placeholder="https://...">
+
+            <!-- Dev & API -->
+            <input type="text" id="name-github" placeholder="GitHub">
+            <input type="url" id="url-github" placeholder="https://...">
+            
+            <input type="text" id="name-cloudflare" placeholder="Cloudflare">
+            <input type="url" id="url-cloudflare" placeholder="https://...">
+            
+            <input type="text" id="name-render" placeholder="Render">
+            <input type="url" id="url-render" placeholder="https://...">
+            
+            <input type="text" id="name-openrouter" placeholder="OpenRouter">
+            <input type="url" id="url-openrouter" placeholder="https://...">
+            
+            <input type="text" id="name-vercel" placeholder="Vercel">
+            <input type="url" id="url-vercel" placeholder="https://...">
+            
+            <input type="text" id="name-supabase" placeholder="Supabase">
+            <input type="url" id="url-supabase" placeholder="https://...">
+            
+            <input type="text" id="name-nous" placeholder="Nous Portal">
+            <input type="url" id="url-nous" placeholder="https://...">
+            
+            <input type="text" id="name-htmlviewer" placeholder="HTML Viewer">
+            <input type="url" id="url-htmlviewer" placeholder="https://...">
+
+            <!-- AI -->
+            <input type="text" id="name-chatgpt" placeholder="ChatGPT">
+            <input type="url" id="url-chatgpt" placeholder="https://...">
+            
+            <input type="text" id="name-claude" placeholder="Claude">
+            <input type="url" id="url-claude" placeholder="https://...">
+            
+            <input type="text" id="name-gemini" placeholder="Gemini">
+            <input type="url" id="url-gemini" placeholder="https://...">
+            
+            <input type="text" id="name-deepseek" placeholder="Deepseek">
+            <input type="url" id="url-deepseek" placeholder="https://...">
+            
+            <input type="text" id="name-qwen" placeholder="Qwen">
+            <input type="url" id="url-qwen" placeholder="https://...">
+            
+            <input type="text" id="name-kimi" placeholder="Kimi">
+            <input type="url" id="url-kimi" placeholder="https://...">
+            
+            <input type="text" id="name-glm" placeholder="GLM">
+            <input type="url" id="url-glm" placeholder="https://...">
+            
+            <input type="text" id="name-aistudio" placeholder="AI Studio">
+            <input type="url" id="url-aistudio" placeholder="https://...">
+            
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="cancel-btn" onclick="closeSettings()">Cancel</button>
+        <button class="save-btn" onclick="saveSettings()">Save & Apply</button>
+      </div>
+    </div>
+  </div>
+
   <div class="container">
-    <!-- GREETING -->
-    <div id="greeting"></div>
-
-    <!-- CLOCK -->
-    <div class="clock" id="clock">--:--</div>
-    <div class="date" id="date">SYDNEY, AUSTRALIA</div>
-
     <!-- WEATHER CARD -->
     <div class="weather" onclick="updateWeather()" style="cursor: pointer;" title="Click to refresh weather">
       <div class="weather-icon" id="weatherIcon">☀️</div>
       <div class="weather-info">
         <div class="temperature" id="temperature">--°C</div>
         <div class="conditions" id="conditions">Loading weather…</div>
-        <div class="weather-location">SYDNEY, AUSTRALIA</div>
+        <div class="weather-location" id="weather-location-text">LOCATION</div>
       </div>
       <div class="weather-extra">
         Feels like <strong id="feels">--°</strong><br>
         Wind <strong id="wind">-- km/h</strong><br>
         Humidity <strong id="humidity">--%</strong>
       </div>
+      <!-- The Clock -->
+      <div class="weather-clock">
+        <div class="clock" id="clock">--:--</div>
+        <div class="date" id="date">LOCAL TIME</div>
+      </div>
     </div>
 
-    <!-- ADVANCED SEARCH BAR -->
-    <div class="search-wrapper">
-      <form class="search-form" id="searchForm" onsubmit="event.preventDefault(); triggerSearch();">
-        <input type="text" id="searchInput" placeholder="Search the web..." autocomplete="off" autofocus oninput="handleInput(this.value)">
-        
-        <div class="dropdown-container">
-          <button type="button" class="search-engine-btn" id="engineBtn" onclick="toggleDropdown(event)">
-            <span id="engineName">Qwant</span>
-            <span style="font-size: 0.5rem; opacity: 0.7;">▼</span>
-          </button>
-          <div class="dropdown-menu" id="engineDropdown">
-            <div class="dropdown-item" onclick="setEngine('Qwant', 'https://www.qwant.com/?q=')">Qwant</div>
-            <div class="dropdown-item" onclick="setEngine('Google', 'https://www.google.com/search?q=')">Google</div>
-            <div class="dropdown-item" onclick="setEngine('Bing', 'https://www.bing.com/search?q=')">Bing</div>
-            <div class="dropdown-item" onclick="setEngine('DuckDuckGo', 'https://duckduckgo.com/?q=')">DuckDuckGo</div>
-            <div class="dropdown-item" onclick="setEngine('Ecosia', 'https://www.ecosia.org/search?q=')">Ecosia</div>
+    <!-- SEARCH ROW -->
+    <div class="search-row">
+      <div class="search-wrapper">
+        <form class="search-form" id="searchForm" onsubmit="event.preventDefault(); triggerSearch();">
+          <input type="text" id="searchInput" placeholder="Search the web..." autocomplete="off" autofocus oninput="handleInput(this.value)">
+          
+          <div class="dropdown-container">
+            <button type="button" class="search-engine-btn" id="engineBtn" onclick="toggleDropdown(event)">
+              <span id="engineName">Qwant</span>
+              <span style="font-size: 0.5rem; opacity: 0.7;">▼</span>
+            </button>
+            <div class="dropdown-menu" id="engineDropdown">
+              <div class="dropdown-item" onclick="setEngine('Qwant', 'https://www.qwant.com/?q=')">Qwant</div>
+              <div class="dropdown-item" onclick="setEngine('Google', 'https://www.google.com/search?q=')">Google</div>
+              <div class="dropdown-item" onclick="setEngine('Bing', 'https://www.bing.com/search?q=')">Bing</div>
+              <div class="dropdown-item" onclick="setEngine('DuckDuckGo', 'https://duckduckgo.com/?q=')">DuckDuckGo</div>
+              <div class="dropdown-item" onclick="setEngine('Ecosia', 'https://www.ecosia.org/search?q=')">Ecosia</div>
+            </div>
+          </div>
+        </form>
+
+        <!-- Slash Commands Menu -->
+        <div class="slash-menu" id="slashMenu">
+          <div class="slash-item" onclick="runSlashCommand('yt', 'YouTube', 'https://www.youtube.com/results?search_query=')">
+            <span class="cmd">/yt</span> Search YouTube
+          </div>
+          <div class="slash-item" onclick="runSlashCommand('gh', 'GitHub', 'https://github.com/search?q=')">
+            <span class="cmd">/gh</span> Search GitHub
+          </div>
+          <div class="slash-item" onclick="runSlashCommand('ask', 'Perplexity', 'https://www.perplexity.ai/search?q=')">
+            <span class="cmd">/ask</span> Ask Perplexity
+          </div>
+          <div class="slash-item" onclick="runSlashCommand('gpt', 'ChatGPT', 'https://chatgpt.com/?q=')">
+            <span class="cmd">/gpt</span> Ask ChatGPT
+          </div>
+          <div class="slash-item" onclick="runSlashCommand('claude', 'Claude', 'https://claude.ai/new?q=')">
+            <span class="cmd">/claude</span> Ask Claude
+          </div>
+          <div class="slash-item" onclick="runSlashCommand('deepl', 'DeepL', 'https://www.deepl.com/translator#en/auto/')">
+            <span class="cmd">/deepl</span> Translate with DeepL
           </div>
         </div>
-      </form>
-
-      <!-- Slash Commands Menu -->
-      <div class="slash-menu" id="slashMenu">
-        <div class="slash-item" onclick="runSlashCommand('yt', 'YouTube', 'https://www.youtube.com/results?search_query=')">
-          <span class="cmd">/yt</span> Search YouTube
-        </div>
-        <div class="slash-item" onclick="runSlashCommand('gh', 'GitHub', 'https://github.com/search?q=')">
-          <span class="cmd">/gh</span> Search GitHub
-        </div>
-        <div class="slash-item" onclick="runSlashCommand('ask', 'Perplexity', 'https://www.perplexity.ai/search?q=')">
-          <span class="cmd">/ask</span> Ask Perplexity
-        </div>
-        <div class="slash-item" onclick="runSlashCommand('gpt', 'ChatGPT', 'https://chatgpt.com/?q=')">
-          <span class="cmd">/gpt</span> Ask ChatGPT
-        </div>
-        <div class="slash-item" onclick="runSlashCommand('claude', 'Claude', 'https://claude.ai/new?q=')">
-          <span class="cmd">/claude</span> Ask Claude
-        </div>
-        <div class="slash-item" onclick="runSlashCommand('deepl', 'DeepL', 'https://www.deepl.com/translator#en/auto/')">
-          <span class="cmd">/deepl</span> Translate with DeepL
-        </div>
-        <div class="slash-item" onclick="runSlashCommand('black', '', '')">
-          <span class="cmd">/black</span> Trigger BlankScreen
-        </div>
       </div>
+      
+      <button class="action-btn" id="blackoutBtn" title="BlankScreen">
+        ⬛
+      </button>
     </div>
 
     <!-- BENTO DASHBOARD -->
     <div class="dashboard-container">
       
-      <!-- ROW 1: Mail (Shrunk Horizontal Strip) -->
+      <!-- ROW 1: Mail -->
       <div class="dashboard-row">
         <div class="category-group mail-group">
           <div class="category-title">Mail</div>
           <div class="tile-grid">
-            <a class="tile" href="https://mail.google.com/" target="_blank" rel="noopener">
+            <a class="tile" id="link-gmail" href="https://mail.google.com/" target="_blank" rel="noopener">
               <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Gmail" xmlns="http://www.w3.org/2000/svg"><path fill="#EA4335" d="M5 12.5 24 27 43 12.5V38H5z"/><path fill="none" stroke="#fff" stroke-width="5" stroke-linejoin="round" d="M5 14 24 29 43 14"/></svg></div>
-              <span>Gmail</span>
+              <span id="text-gmail">Gmail</span>
             </a>
-            <a class="tile" href="https://outlook.live.com/" target="_blank" rel="noopener">
+            <a class="tile" id="link-outlook" href="https://outlook.live.com/" target="_blank" rel="noopener">
               <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Outlook" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="9" width="38" height="30" rx="5" fill="#0877D1"/><path d="m7 13 17 14 17-14" fill="none" stroke="#fff" stroke-width="3.5"/><rect x="3" y="14" width="18" height="20" rx="3" fill="#185ABD"/><path d="M8 19h8v10H8z" fill="#fff" opacity=".9"/></svg></div>
-              <span>Outlook</span>
+              <span id="text-outlook">Outlook</span>
             </a>
-            <a class="tile" href="https://proton.me/mail" target="_blank" rel="noopener">
+            <a class="tile" id="link-proton" href="https://proton.me/mail" target="_blank" rel="noopener">
               <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="ProtonMail" xmlns="http://www.w3.org/2000/svg"><path fill="#6D4AFF" d="M24 5 43 16v17L24 44 5 33V16z"/><path fill="none" stroke="#fff" stroke-width="3.2" stroke-linejoin="round" d="m9 17 15 11 15-11M9 33l10-8m20 8L29 25"/></svg></div>
-              <span>ProtonMail</span>
+              <span id="text-proton">ProtonMail</span>
             </a>
           </div>
         </div>
@@ -942,37 +1303,37 @@
         <div class="category-group general-group">
           <div class="category-title">General</div>
           <div class="tile-grid">
-            <a class="tile" href="https://youtube.com/" target="_blank" rel="noopener">
+            <a class="tile" id="link-youtube" href="https://youtube.com/" target="_blank" rel="noopener">
               <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="YouTube" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="10" width="40" height="28" rx="8" fill="#FF0033"/><path d="m20 17 13 7-13 7z" fill="#fff"/></svg></div>
-              <span>YouTube</span>
+              <span id="text-youtube">YouTube</span>
             </a>
-            <a class="tile" href="https://reddit.com/" target="_blank" rel="noopener">
+            <a class="tile" id="link-reddit" href="https://reddit.com/" target="_blank" rel="noopener">
               <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Reddit" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="25" r="18" fill="#FF4500"/><path d="m17 25 3 2m11-2-3 2" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="18" cy="23" r="2.2" fill="#fff"/><circle cx="30" cy="23" r="2.2" fill="#fff"/><path d="M17 31q7 6 14 0" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><path d="m25 8 5 2" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><circle cx="31" cy="10" r="3" fill="#fff"/></svg></div>
-              <span>Reddit</span>
+              <span id="text-reddit">Reddit</span>
             </a>
-            <a class="tile" href="https://soundcloud.com/" target="_blank" rel="noopener">
+            <a class="tile" id="link-soundcloud" href="https://soundcloud.com/" target="_blank" rel="noopener">
               <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="SoundCloud" xmlns="http://www.w3.org/2000/svg"><path fill="#FF5500" d="M5 29h4v8H5zm6-6h4v14h-4zm6-7h4v21h-4zm6-3h4v24h-4zm6 5h4v19h-4zm6 5h4v14h-4zm2 0a9 9 0 0 1 0 18h-2V23z"/></svg></div>
-              <span>SoundCloud</span>
+              <span id="text-soundcloud">SoundCloud</span>
             </a>
-            <a class="tile" href="https://discord.com/app" target="_blank" rel="noopener">
+            <a class="tile" id="link-discord" href="https://discord.com/app" target="_blank" rel="noopener">
               <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Discord" xmlns="http://www.w3.org/2000/svg"><path fill="#5865F2" d="M12 10q12-6 24 0l6 25q-8 7-13 5l-2-3q-3 1-6 0l-2 3q-6 1-13-5z"/><circle cx="18" cy="25" r="3" fill="#fff"/><circle cx="31" cy="25" r="3" fill="#fff"/><path d="M17 33q7 5 15 0" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></div>
-              <span>Discord</span>
+              <span id="text-discord">Discord</span>
             </a>
-            <a class="tile" href="https://twitch.tv/" target="_blank" rel="noopener">
+            <a class="tile" id="link-twitch" href="https://twitch.tv/" target="_blank" rel="noopener">
               <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Twitch" xmlns="http://www.w3.org/2000/svg"><path fill="#9146FF" d="M9 5H43v25L31 41H22l-7 5v-8H5V12z"/><path fill="#fff" d="M13 10h25v18l-8 8h-8l-5 4v-6h-4z"/><path fill="#9146FF" d="M20 15h4v11h-4zm10 0h4v11h-4z"/></svg></div>
-              <span>Twitch</span>
+              <span id="text-twitch">Twitch</span>
             </a>
-            <a class="tile" href="https://store.steampowered.com/" target="_blank" rel="noopener">
+            <a class="tile" id="link-steam" href="https://store.steampowered.com/" target="_blank" rel="noopener">
               <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Steam" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="21" fill="#fff"/><circle cx="31" cy="17" r="8" fill="#171D25"/><circle cx="31" cy="17" r="4.5" fill="#fff"/><path d="m7 27 13 6 5-7" fill="none" stroke="#171D25" stroke-width="5" stroke-linecap="round"/><circle cx="17" cy="34" r="6" fill="#171D25"/><circle cx="17" cy="34" r="3" fill="#fff"/></svg></div>
-              <span>Steam</span>
+              <span id="text-steam">Steam</span>
             </a>
-            <a class="tile" href="https://railscope.pages.dev/" target="_blank" rel="noopener">
-              <div class="icon" style="font-size: 1.2rem; color: #60a5fa;">🚆</div>
-              <span>Railscope</span>
+            <a class="tile" id="link-railscope" href="https://railscope.pages.dev/" target="_blank" rel="noopener">
+              <div class="icon" style="font-size: 2vmin; color: #60a5fa;">🚆</div>
+              <span id="text-railscope">Railscope</span>
             </a>
-            <a class="tile" href="https://psyde-chat.pages.dev/" target="_blank" rel="noopener">
-              <div class="icon" style="font-size: 1.2rem; color: #a78bfa;">🧠</div>
-              <span>Psydechat</span>
+            <a class="tile" id="link-psydechat" href="https://psyde-chat.pages.dev/" target="_blank" rel="noopener">
+              <div class="icon" style="font-size: 2vmin; color: #a78bfa;">🧠</div>
+              <span id="text-psydechat">Psydechat</span>
             </a>
           </div>
         </div>
@@ -980,41 +1341,41 @@
         <div class="category-group dev-group">
           <div class="category-title">Dev & API</div>
           <div class="tile-grid">
-            <a class="tile" href="https://github.com/" target="_blank" rel="noopener">
+            <a class="tile" id="link-github" href="https://github.com/" target="_blank" rel="noopener">
               <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="GitHub" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M24 5a19 19 0 0 0-6 37c1 .2 1.4-.4 1.4-1v-4c-5.8 1.3-7-2.4-7-2.4-1-2.4-2.3-3-2.3-3-1.9-1.3.2-1.3.2-1.3 2.1.2 3.2 2.2 3.2 2.2 1.9 3.2 4.9 2.3 6.1 1.8.2-1.4.7-2.3 1.3-2.8-4.6-.5-9.4-2.3-9.4-10.2 0-2.3.8-4.1 2.2-5.6-.2-.5-1-2.7.2-5.6 0 0 1.8-.6 5.9 2.1a20 20 0 0 1 10.8 0c4.1-2.7 5.9-2.1 5.9-2.1 1.2 2.9.4 5.1.2 5.6 1.4 1.5 2.2 3.3 2.2 5.6 0 7.9-4.8 9.7-9.4 10.2.7.6 1.4 1.7 1.4 3.5V41c0 .6.4 1.2 1.4 1A19 19 0 0 0 24 5z"/></svg></div>
-              <span>GitHub</span>
+              <span id="text-github">GitHub</span>
             </a>
-            <a class="tile" href="https://dash.cloudflare.com/" target="_blank" rel="noopener">
+            <a class="tile" id="link-cloudflare" href="https://dash.cloudflare.com/" target="_blank" rel="noopener">
               <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Cloudflare" xmlns="http://www.w3.org/2000/svg"><path fill="#F38020" d="M10 34h27a7 7 0 0 0 0-14h-1a13 13 0 0 0-25-2 8 8 0 0 0-1 16z"/><path fill="#FAAE40" d="M8 37h29a5 5 0 0 0 0-10H13a5 5 0 0 0-5 10z"/></svg></div>
-              <span>Cloudflare</span>
+              <span id="text-cloudflare">Cloudflare</span>
             </a>
-            <a class="tile" href="https://render.com/" target="_blank" rel="noopener">
+            <a class="tile" id="link-render" href="https://render.com/" target="_blank" rel="noopener">
               <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Render" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M8 7h22a11 11 0 0 1 0 22H20v12H8zm12 10v4h10a2 2 0 0 0 0-4z"/></svg></div>
-              <span>Render</span>
+              <span id="text-render">Render</span>
             </a>
-            <a class="tile" href="https://openrouter.ai/" target="_blank" rel="noopener">
+            <a class="tile" id="link-openrouter" href="https://openrouter.ai/" target="_blank" rel="noopener">
               <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="OpenRouter" xmlns="http://www.w3.org/2000/svg"><path fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M9 12h17a8 8 0 0 1 8 8v1m-7-6 7 6 7-6M9 36h13a8 8 0 0 0 8-8v-1"/></svg></div>
-              <span>OpenRouter</span>
+              <span id="text-openrouter">OpenRouter</span>
             </a>
-            <a class="tile" href="https://vercel.com/" target="_blank" rel="noopener">
+            <a class="tile" id="link-vercel" href="https://vercel.com/" target="_blank" rel="noopener">
               <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Vercel" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M24 5 46 43H2z"/></svg></div>
-              <span>Vercel</span>
+              <span id="text-vercel">Vercel</span>
             </a>
-            <a class="tile" href="https://supabase.com/" target="_blank" rel="noopener">
+            <a class="tile" id="link-supabase" href="https://supabase.com/" target="_blank" rel="noopener">
               <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Supabase" xmlns="http://www.w3.org/2000/svg"><path fill="#3ECF8E" d="M26 5 8 27h14l-2 16 20-25H26z"/></svg></div>
-              <span>Supabase</span>
+              <span id="text-supabase">Supabase</span>
             </a>
-            <a class="tile" href="https://portal.nousresearch.com/" target="_blank" rel="noopener">
+            <a class="tile" id="link-nous" href="https://portal.nousresearch.com/" target="_blank" rel="noopener">
               <div class="icon">
                 <img class="brand-mark custom-brand-icon" src="https://pbs.twimg.com/profile_images/1816254738234761216/TX7TW-Mp.jpg" alt="" aria-label="Nous Portal" title="Nous Portal" referrerpolicy="no-referrer" loading="eager" decoding="async" onerror="if(!this.dataset.proxyTried){this.dataset.proxyTried='1';this.src='https://images.weserv.nl/?url=https%3A%2F%2Fpbs.twimg.com%2Fprofile_images%2F1816254738234761216%2FTX7TW-Mp.jpg'}else{this.style.visibility='hidden'}">
               </div>
-              <span>Nous Portal</span>
+              <span id="text-nous">Nous Portal</span>
             </a>
-            <a class="tile" href="https://html.onlineviewer.net/" target="_blank" rel="noopener">
-              <div class="icon" style="font-family: monospace; color: var(--accent-soft); font-weight: bold; font-size: 1.1rem; letter-spacing: -1px;">
+            <a class="tile" id="link-htmlviewer" href="https://html.onlineviewer.net/" target="_blank" rel="noopener">
+              <div class="icon" style="font-family: monospace; color: var(--accent-soft); font-weight: bold; font-size: 1.8vmin; letter-spacing: -1px;">
                 &lt;/&gt;
               </div>
-              <span>HTML Viewer</span>
+              <span id="text-htmlviewer">HTML Viewer</span>
             </a>
           </div>
         </div>
@@ -1022,107 +1383,140 @@
         <div class="category-group ai-group">
           <div class="category-title">AI</div>
           <div class="tile-grid">
-            <a class="tile" href="https://chatgpt.com/" target="_blank" rel="noopener">
+            <a class="tile" id="link-chatgpt" href="https://chatgpt.com/" target="_blank" rel="noopener">
               <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="ChatGPT" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 7a9 9 0 0 1 8 5l5 3a9 9 0 0 1 1 9l-1 6a9 9 0 0 1-8 5h-6l-5 3a9 9 0 0 1-8-5l-5-3a9 9 0 0 1-1-9l1-6a9 9 0 0 1 8-5h6z"/><path d="m17 13 14 22M10 19l28 10M10 30l21-17"/></g></svg></div>
-              <span>ChatGPT</span>
+              <span id="text-chatgpt">ChatGPT</span>
             </a>
-            <a class="tile" href="https://claude.ai/" target="_blank" rel="noopener">
+            <a class="tile" id="link-claude" href="https://claude.ai/" target="_blank" rel="noopener">
               <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Claude" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="#D97757" stroke-width="3" stroke-linecap="round"><path d="M24 4v40M4 24h40M10 10l28 28M38 10 10 38"/><path d="m24 4 3 8-3-2-3 2zM44 24l-8 3 2-3-2-3zM24 44l-3-8 3 2 3-2zM4 24l8-3-2 3 2 3z" fill="#D97757"/></g></svg></div>
-              <span>Claude</span>
+              <span id="text-claude">Claude</span>
             </a>
-            <a class="tile" href="https://gemini.google.com/" target="_blank" rel="noopener">
+            <a class="tile" id="link-gemini" href="https://gemini.google.com/" target="_blank" rel="noopener">
               <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Gemini" xmlns="http://www.w3.org/2000/svg"><path fill="#8AB4F8" d="M24 3c2 11 7 16 21 21-14 3-19 8-21 21C21 32 16 27 3 24 16 21 21 16 24 3z"/><path fill="#C58AF9" d="M37 4c1 5 3 7 8 8-5 1-7 3-8 8-1-5-3-7-8-8 5-1 7-3 8-8z"/></svg></div>
-              <span>Gemini</span>
+              <span id="text-gemini">Gemini</span>
             </a>
-            <a class="tile" href="https://chat.deepseek.com/" target="_blank" rel="noopener">
+            <a class="tile" id="link-deepseek" href="https://chat.deepseek.com/" target="_blank" rel="noopener">
               <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Deepseek" xmlns="http://www.w3.org/2000/svg"><path fill="#4D6BFE" d="M5 29q7-15 17-8 8-12 21-3-10-1-13 8 8 1 13 10-13-5-20-1-9 5-18-6z"/><circle cx="29" cy="20" r="2" fill="#fff"/></svg></div>
-              <span>Deepseek</span>
+              <span id="text-deepseek">Deepseek</span>
             </a>
-            <a class="tile" href="https://chat.qwen.ai/" target="_blank" rel="noopener">
+            <a class="tile" id="link-qwen" href="https://chat.qwen.ai/" target="_blank" rel="noopener">
               <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Qwen" xmlns="http://www.w3.org/2000/svg"><path fill="#8B7CFF" d="M8 13q0-7 8-7h16q8 0 8 7v17q0 7-8 7H20l-8 6v-7q-4-2-4-7z"/><path d="M17 19h14M17 26h9" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg></div>
-              <span>Qwen</span>
+              <span id="text-qwen">Qwen</span>
             </a>
-            <a class="tile" href="https://kimi.moonshot.cn/" target="_blank" rel="noopener">
+            <a class="tile" id="link-kimi" href="https://kimi.moonshot.cn/" target="_blank" rel="noopener">
               <div class="icon">
                 <img class="brand-mark custom-brand-icon" src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/kimi-ai-icon.png" alt="" aria-label="Kimi" title="Kimi" referrerpolicy="no-referrer" loading="eager" decoding="async" onerror="if(!this.dataset.proxyTried){this.dataset.proxyTried='1';this.src='https://images.weserv.nl/?url=https%3A%2F%2Fuxwing.com%2Fwp-content%2Fthemes%2Fuxwing%2Fdownload%2Fbrands-and-social-media%2Fkimi-ai-icon.png'}else{this.style.visibility='hidden'}">
               </div>
-              <span>Kimi</span>
+              <span id="text-kimi">Kimi</span>
             </a>
-            <a class="tile" href="https://chatglm.cn/" target="_blank" rel="noopener">
+            <a class="tile" id="link-glm" href="https://chatglm.cn/" target="_blank" rel="noopener">
               <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="GLM" xmlns="http://www.w3.org/2000/svg"><path fill="#26B3A4" d="M24 4 43 15v18L24 44 5 33V15z"/><path d="M15 24h18m-9-9 9 9-9 9" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-              <span>GLM</span>
+              <span id="text-glm">GLM</span>
             </a>
-            <a class="tile" href="https://aistudio.google.com/" target="_blank" rel="noopener">
+            <a class="tile" id="link-aistudio" href="https://aistudio.google.com/" target="_blank" rel="noopener">
               <div class="icon"><img class="brand-mark custom-brand-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Google_AI_Studio_icon_%28May_2026%29.svg/1280px-Google_AI_Studio_icon_%28May_2026%29.svg.png" alt="" aria-label="AI Studio" title="AI Studio" referrerpolicy="no-referrer" loading="eager" decoding="async" onerror="if(!this.dataset.proxyTried){this.dataset.proxyTried='1';this.src='https://images.weserv.nl/?url=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F7%2F77%2FGoogle_AI_Studio_icon_%2528May_2026%2529.svg%2F1280px-Google_AI_Studio_icon_%2528May_2026%2529.svg.png'}else{this.style.visibility='hidden'}"></div>
-              <span>AI Studio</span>
+              <span id="text-aistudio">AI Studio</span>
             </a>
           </div>
         </div>
 
       </div>
-
-      <!-- ROW 3: Full Width Blackout Button -->
-      <div class="dashboard-row">
-        <button class="tile tile-button blackout-tile" id="blackoutBtn">
-          <div class="icon" style="background: rgba(40, 44, 70, 0.9);">
-            <span style="font-size: 0.9rem;">⬛</span>
-          </div>
-          <span>BlankScreen · full black</span>
-        </button>
-      </div>
-
     </div>
 
     <div class="footer">YOUR SPACE · YOUR INTERNET</div>
   </div>
 
   <script>
-    // ---------- SYDNEY CLOCK & GREETING ----------
+    // ==========================================
+    // DEFAULT CONFIGURATION
+    // ==========================================
+    const DEFAULT_CONFIG = {
+      location: {
+        city: "Sydney, Australia",
+        lat: "-33.8688",
+        lon: "151.2093"
+      },
+      links: {
+        gmail: { name: "Gmail", url: "https://mail.google.com/" },
+        outlook: { name: "Outlook", url: "https://outlook.live.com/" },
+        proton: { name: "ProtonMail", url: "https://proton.me/mail" },
+        youtube: { name: "YouTube", url: "https://youtube.com/" },
+        reddit: { name: "Reddit", url: "https://reddit.com/" },
+        soundcloud: { name: "SoundCloud", url: "https://soundcloud.com/" },
+        discord: { name: "Discord", url: "https://discord.com/app" },
+        twitch: { name: "Twitch", url: "https://twitch.tv/" },
+        steam: { name: "Steam", url: "https://store.steampowered.com/" },
+        railscope: { name: "Railscope", url: "https://railscope.pages.dev/" },
+        psydechat: { name: "Psydechat", url: "https://psyde-chat.pages.dev/" },
+        github: { name: "GitHub", url: "https://github.com/" },
+        cloudflare: { name: "Cloudflare", url: "https://dash.cloudflare.com/" },
+        render: { name: "Render", url: "https://render.com/" },
+        openrouter: { name: "OpenRouter", url: "https://openrouter.ai/" },
+        vercel: { name: "Vercel", url: "https://vercel.com/" },
+        supabase: { name: "Supabase", url: "https://supabase.com/" },
+        nous: { name: "Nous Portal", url: "https://portal.nousresearch.com/" },
+        htmlviewer: { name: "HTML Viewer", url: "https://html.onlineviewer.net/" },
+        chatgpt: { name: "ChatGPT", url: "https://chatgpt.com/" },
+        claude: { name: "Claude", url: "https://claude.ai/" },
+        gemini: { name: "Gemini", url: "https://gemini.google.com/" },
+        deepseek: { name: "Deepseek", url: "https://chat.deepseek.com/" },
+        qwen: { name: "Qwen", url: "https://chat.qwen.ai/" },
+        kimi: { name: "Kimi", url: "https://kimi.moonshot.cn/" },
+        glm: { name: "GLM", url: "https://chatglm.cn/" },
+        aistudio: { name: "AI Studio", url: "https://aistudio.google.com/" }
+      }
+    };
+
+    let currentConfig = JSON.parse(localStorage.getItem('aesthetic_newtab_config')) || JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+
+    // ---------- APPLY CONFIG TO UI ----------
+    function applyConfig() {
+      document.getElementById('weather-location-text').textContent = currentConfig.location.city.toUpperCase();
+
+      for (const [key, data] of Object.entries(currentConfig.links)) {
+        const linkEl = document.getElementById('link-' + key);
+        const textEl = document.getElementById('text-' + key);
+        if (linkEl && textEl) {
+          linkEl.href = data.url;
+          textEl.textContent = data.name;
+        }
+      }
+
+      updateWeather();
+    }
+
+    // ---------- CLOCK (Local Time) ----------
     function updateClock() {
       const now = new Date();
 
-      document.getElementById('clock').textContent = now.toLocaleTimeString('en-AU', {
-        timeZone: 'Australia/Sydney',
+      document.getElementById('clock').textContent = now.toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit',
         hour12: false
       });
 
-      const dateStr = now.toLocaleDateString('en-AU', {
-        timeZone: 'Australia/Sydney',
+      const dateStr = now.toLocaleDateString([], {
         weekday: 'long',
         day: 'numeric',
         month: 'long',
         year: 'numeric'
       }).toUpperCase();
-      document.getElementById('date').textContent = dateStr + ' · SYDNEY (AEST)';
-
-      const hour = parseInt(now.toLocaleTimeString('en-AU', { 
-        timeZone: 'Australia/Sydney', 
-        hour12: false, 
-        hour: 'numeric' 
-      }));
       
-      let greeting = "Good evening";
-      if (hour >= 4 && hour < 12) greeting = "Good morning";
-      else if (hour >= 12 && hour < 18) greeting = "Good afternoon";
-      
-      const greetingEl = document.getElementById('greeting');
-      if (greetingEl.textContent !== greeting) {
-        greetingEl.textContent = greeting;
-      }
+      document.getElementById('date').textContent = dateStr;
     }
 
     updateClock();
     setInterval(updateClock, 1000);
 
-    // ---------- SYDNEY WEATHER ----------
+    // ---------- WEATHER ----------
     async function updateWeather() {
+      const { lat, lon } = currentConfig.location;
+      
       const url = 'https://api.open-meteo.com/v1/forecast' +
-        '?latitude=-33.8688' +
-        '&longitude=151.2093' +
+        `?latitude=${lat}` +
+        `&longitude=${lon}` +
         '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m' +
-        '&timezone=Australia%2FSydney';
+        '&timezone=auto';
 
       try {
         const response = await fetch(url);
@@ -1151,12 +1545,90 @@
         document.getElementById('humidity').textContent = current.relative_humidity_2m + '%';
 
       } catch (error) {
-        document.getElementById('conditions').textContent = 'Weather temporarily unavailable';
+        document.getElementById('conditions').textContent = 'Weather unavailable';
       }
     }
 
-    updateWeather();
     setInterval(updateWeather, 15 * 60 * 1000);
+
+    // ---------- SETTINGS MODAL LOGIC ----------
+    function openSettings() {
+      // Populate Location
+      document.getElementById('set-city').value = currentConfig.location.city;
+
+      // Populate Links (Name & URL)
+      for (const [key, data] of Object.entries(currentConfig.links)) {
+        const nameInput = document.getElementById('name-' + key);
+        const urlInput = document.getElementById('url-' + key);
+        if (nameInput && urlInput) {
+          nameInput.value = data.name;
+          urlInput.value = data.url;
+        }
+      }
+
+      document.getElementById('settings-modal').classList.add('active');
+    }
+
+    function closeSettings() {
+      document.getElementById('settings-modal').classList.remove('active');
+    }
+
+    async function saveSettings() {
+      const saveBtn = document.querySelector('.save-btn');
+      const originalText = saveBtn.textContent;
+      
+      const newCity = document.getElementById('set-city').value.trim();
+      
+      // 1. Handle Location Change (Geocoding)
+      if (newCity && newCity !== currentConfig.location.city) {
+        saveBtn.textContent = "Searching city...";
+        saveBtn.disabled = true;
+
+        try {
+          const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(newCity)}&count=1&language=en&format=json`);
+          const geoData = await geoRes.json();
+          
+          if (geoData.results && geoData.results.length > 0) {
+            currentConfig.location.city = newCity;
+            currentConfig.location.lat = geoData.results[0].latitude;
+            currentConfig.location.lon = geoData.results[0].longitude;
+          } else {
+            alert("Could not find that city. Weather might not update.");
+            currentConfig.location.city = newCity;
+          }
+        } catch (e) {
+          console.warn("Geocoding failed:", e);
+          currentConfig.location.city = newCity;
+        }
+      }
+
+      // 2. Handle Links
+      for (const key of Object.keys(currentConfig.links)) {
+        const nameInput = document.getElementById('name-' + key);
+        const urlInput = document.getElementById('url-' + key);
+        
+        if (nameInput && urlInput) {
+          if (nameInput.value.trim() !== '') currentConfig.links[key].name = nameInput.value.trim();
+          if (urlInput.value.trim() !== '') currentConfig.links[key].url = urlInput.value.trim();
+        }
+      }
+
+      // 3. Save to LocalStorage and Apply
+      localStorage.setItem('aesthetic_newtab_config', JSON.stringify(currentConfig));
+      applyConfig();
+      
+      saveBtn.textContent = originalText;
+      saveBtn.disabled = false;
+      closeSettings();
+    }
+
+    // Close modal on outside click
+    document.getElementById('settings-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'settings-modal') closeSettings();
+    });
+
+    // Run apply config on page load
+    applyConfig();
 
     // ---------- SEARCH ENGINE DROPDOWN ----------
     let activeSearchUrl = 'https://www.qwant.com/?q=';
@@ -1231,7 +1703,6 @@
     const stealthList = document.getElementById('stealth-list');
     const stealthCount = document.getElementById('stealth-count');
 
-    // Keep fallback data in sync with the hardcoded HTML above.
     const FALLBACK_STEALTH_MODELS = [
       {
         name: 'Crouton Alpha',
@@ -1258,7 +1729,6 @@
         const parsed = stored ? JSON.parse(stored) : [];
         return Array.isArray(parsed) ? parsed.filter(name => typeof name === 'string') : [];
       } catch (error) {
-        console.warn('Could not read seen stealth models:', error);
         return [];
       }
     }
@@ -1269,13 +1739,10 @@
           'stealth_seen',
           JSON.stringify(models.map(model => model.name))
         );
-      } catch (error) {
-        console.warn('Storage unavailable; seen models will not persist:', error);
-      }
+      } catch (error) {}
     }
 
     function renderStealthModels(models) {
-      // Build nodes instead of interpreting API-provided strings as HTML.
       const fragment = document.createDocumentFragment();
 
       models.forEach(model => {
@@ -1311,7 +1778,6 @@
       stealthCount.textContent = `(${models.length})`;
     }
 
-    // Clicking the header toggles the widget and marks current models as seen.
     function toggleWidget(e) {
       if (e) e.stopPropagation();
       stealthWidget.classList.toggle('expanded');
@@ -1322,7 +1788,6 @@
       }
     }
 
-    // Close widget if clicking anywhere outside.
     document.addEventListener('click', (e) => {
       if (!e.target.closest('#stealth-widget') && stealthWidget.classList.contains('expanded')) {
         stealthWidget.classList.remove('expanded');
@@ -1341,7 +1806,6 @@
           throw new Error('Worker returned no models');
         }
 
-        // Normalize and validate the fields used by the UI.
         const safeModels = models
           .filter(model => model && typeof model === 'object')
           .map(model => ({
@@ -1364,12 +1828,10 @@
           stealthWidget.classList.add('has-new');
         }
       } catch (error) {
-        // Keep the last successfully rendered models (or initial fallbacks) visible.
         console.warn('Stealth model refresh failed; keeping existing models:', error);
       }
     }
 
-    // Show fallback data immediately, then fetch and refresh periodically.
     renderStealthModels(FALLBACK_STEALTH_MODELS);
     checkStealthModels();
     setInterval(checkStealthModels, 30 * 60 * 1000);
