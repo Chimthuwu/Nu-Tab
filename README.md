@@ -1,4 +1,4 @@
-# 🪐 Aesthetic New Tab
+# 🪐Nu Tab
 
 A sleek, fully customizable, Bento-style dashboard for your browser. Built with vanilla HTML, CSS, and JavaScript, this new tab page replaces your default homepage with a beautiful, functional workspace.
 
