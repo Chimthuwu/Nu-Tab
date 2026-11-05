@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <meta name="darkreader-lock">
+  <title>aesthetic new tab · Sydney</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ----- RESET & GLOBAL ----- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Preserve the authored dark palette; opt out of browser light/dark auto-recolouring. */
+    html {
+      color-scheme: dark;
+      background-color: #0a0b10 !important;
+    }
+
+    :root {
+      --bg-deep: #0a0b10;
+      --card-bg: rgba(18, 21, 33, 0.75);
+      --card-border: rgba(255, 255, 255, 0.06);
+      --text-primary: #f0f2fa;
+      --text-muted: #8b92aa;
+      --accent-soft: #a99cff;
+      --accent-glow: rgba(139, 124, 255, 0.18);
+      --glass-blur: blur(16px);
+      --transition-smooth: 0.25s cubic-bezier(0.2, 0.9, 0.3, 1);
+      --lime-green: #a3e635;
+      --lime-glow: rgba(163, 230, 53, 0.3);
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 50% -10%, #2b2a4a 0%, transparent 60%),
+        radial-gradient(ellipse at 100% 100%, #0f1e2b 0%, transparent 50%),
+        var(--bg-deep);
+      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      overflow: hidden; 
+      position: relative;
+      transition: background 0.3s;
+    }
+
+    /* fullscreen blackout mode */
+    body.blackout-mode {
+      background: #000000 !important;
+    }
+
+    body.blackout-mode .container, body.blackout-mode #stealth-widget {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    body.blackout-mode::before {
+      opacity: 0;
+    }
+
+    body.blackout-mode .blackout-exit {
+      display: flex;
+    }
+
+    /* subtle animated glow */
+    body::before {
+      content: "";
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: #6b5aff;
+      filter: blur(190px);
+      opacity: 0.1;
+      top: -350px;
+      left: calc(50% - 300px);
+      pointer-events: none;
+      animation: floatGlow 9s ease-in-out infinite alternate;
+      z-index: 0;
+      transition: opacity 0.3s;
+    }
+
+    @keyframes floatGlow {
+      0%   { transform: translate(-60px, 0) scale(1); opacity: 0.06; }
+      100% { transform: translate(60px, 120px) scale(1.1); opacity: 0.14; }
+    }
+
+    /* ----- BLACKOUT EXIT BUTTON ----- */
+    .blackout-exit {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: #000000;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .blackout-exit .hint {
+      color: #222;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      animation: pulseHint 3s infinite;
+      user-select: none;
+    }
+
+    @keyframes pulseHint {
+      0%, 100% { opacity: 0.1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* ----- MAIN CONTAINER ----- */
+    .container {
+      width: 100%;
+      max-width: 960px;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+      transition: opacity 0.3s;
+    }
+
+    /* ----- GREETING ----- */
+    #greeting {
+      color: var(--accent-soft);
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 0.1rem;
+      font-weight: 500;
+      opacity: 0.8;
+      animation: fadeUp 0.7s ease both;
+    }
+
+    /* ----- CLOCK ----- */
+    .clock {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: clamp(3.5rem, 8vw, 5rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 0.1rem;
+
+      background: linear-gradient(115deg, #ffffff, #c8c0ff, #9488ff, #8ad2ff, #ffffff);
+      background-size: 300% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+
+      animation: shimmer 9s linear infinite, fadeUp 0.8s ease both;
+      text-shadow: 0 0 20px rgba(139, 124, 255, 0.2);
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: 0% center; }
+      100% { background-position: 300% center; }
+    }
+
+    .date {
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+      font-weight: 400;
+      opacity: 0.9;
+      animation: fadeUp 0.9s 0.1s ease both;
+    }
+
+    /* ----- WEATHER CARD ----- */
+    .weather {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.8rem;
+      padding: 1rem 2.5rem;
+      margin-bottom: 1.2rem;
+
+      background: rgba(20, 24, 38, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: 2.5rem;
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+
+      animation: fadeUp 1s 0.15s ease both;
+      transition: box-shadow 0.3s, transform 0.2s;
+    }
+
+    .weather:hover {
+      box-shadow: 0 24px 45px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px var(--accent-soft) inset;
+    }
+
+    .weather:active {
+      transform: scale(0.98);
+    }
+
+    .weather-icon {
+      font-size: 2.5rem;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+    }
+
+    .weather-info {
+      text-align: left;
+    }
+
+    .temperature {
+      font-size: 2rem;
+      font-weight: 650;
+      letter-spacing: -0.02em;
+    }
+
+    .conditions {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+      font-weight: 400;
+    }
+
+    .weather-location {
+      color: var(--accent-soft);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      margin-top: 0.2rem;
+      font-weight: 500;
+    }
+
+    .weather-extra {
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+      padding-left: 1.8rem;
+      text-align: left;
+      font-size: 0.8rem;
+      line-height: 1.9;
+      color: var(--text-muted);
+    }
+
+    .weather-extra strong {
+      color: var(--text-primary);
+      font-weight: 500;
+      margin-left: 0.3rem;
+    }
+
+    /* ----- ADVANCED SEARCH BAR & DROPDOWN ----- */
+    .search-wrapper {
+      width: 100%;
+      max-width: 580px;
+      margin: 0 auto 1.5rem;
+      animation: fadeUp 0.9s 0.2s ease both;
+      position: relative;
+      z-index: 50; 
+    }
+
+    .search-form {
+      display: flex;
+      align-items: center;
+      background: rgba(14, 16, 26, 0.6);
+      border: 2px solid rgba(139, 124, 255, 0.3);
+      border-radius: 3rem;
+      padding: 0.4rem 0.4rem 0.4rem 1.2rem;
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      transition: border-color 0.25s, box-shadow 0.3s, background 0.2s;
+      box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.4);
+      position: relative;
+      z-index: 51;
+    }
+
+    .search-form:focus-within {
+      border-color: var(--accent-soft);
+      background: rgba(18, 20, 32, 0.9);
+      box-shadow: 0 0 0 4px var(--accent-glow), 0 8px 25px -6px rgba(0,0,0,0.6);
+    }
+
+    .search-form input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 0.95rem;
+      font-weight: 400;
+      outline: none;
+      padding: 0.5rem 0;
+    }
+
+    .search-form input::placeholder {
+      color: #6f7590;
+      font-weight: 300;
+    }
+
+    /* Custom Dropdown Container */
+    .dropdown-container {
+      position: relative;
+      margin-right: 0.2rem;
+    }
+
+    .search-engine-btn {
+      background: rgba(40, 44, 70, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--accent-soft);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.6rem 1.2rem;
+      border-radius: 2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .search-engine-btn:hover {
+      background: rgba(60, 65, 100, 0.8);
+      color: #fff;
+    }
+
+    /* The Dropdown Menu */
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      background: rgba(18, 21, 33, 0.98);
+      border: 1px solid var(--card-border);
+      border-radius: 1rem;
+      padding: 0.5rem;
+      min-width: 150px;
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.8);
+      flex-direction: column;
+      gap: 0.2rem;
+      transform-origin: top right;
+      animation: dropdownOpen 0.2s ease both;
+      z-index: 60;
+    }
+
+    .dropdown-menu.active {
+      display: flex;
+    }
+
+    .dropdown-item {
+      padding: 0.6rem 1rem;
+      border-radius: 0.6rem;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      font-weight: 500;
+      transition: background 0.2s, color 0.2s;
+      text-align: left;
+    }
+
+    .dropdown-item:hover {
+      background: rgba(139, 124, 255, 0.15);
+      color: var(--accent-soft);
+    }
+
+    @keyframes dropdownOpen {
+      from { opacity: 0; transform: scale(0.95) translateY(-5px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* Slash Commands Menu */
+    .slash-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 0;
+      width: 100%;
+      background: rgba(18, 21, 33, 0.98);
+      border: 1px solid var(--card-border);
+      border-radius: 1rem;
+      padding: 0.5rem;
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.8);
+      flex-direction: column;
+      gap: 0.2rem;
+      z-index: 60;
+      transform-origin: top center;
+      animation: dropdownOpen 0.2s ease both;
+    }
+
+    .slash-menu.active {
+      display: flex;
+    }
+
+    .slash-item {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.7rem 1rem;
+      border-radius: 0.6rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+      transition: background 0.2s;
+      text-align: left;
+    }
+
+    .slash-item:hover {
+      background: rgba(139, 124, 255, 0.15);
+    }
+
+    .slash-item span.cmd {
+      background: rgba(255,255,255,0.1);
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.4rem;
+      font-family: monospace;
+      font-size: 0.8rem;
+      color: var(--accent-soft);
+      min-width: 65px;
+      text-align: center;
+    }
+
+    /* ----- BENTO DASHBOARD LAYOUT ----- */
+    .dashboard-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      max-width: 850px;
+      margin: auto;
+      animation: fadeUp 1s 0.3s ease both;
+      text-align: left;
+    }
+
+    .dashboard-row {
+      display: flex;
+      gap: 0.8rem;
+      align-items: stretch;
+    }
+
+    .category-group {
+      background: rgba(18, 21, 33, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      border-radius: 1.2rem;
+      padding: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .category-title {
+      color: var(--text-muted);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .tile-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.6rem;
+      height: 100%;
+      align-content: start;
+    }
+
+    /* ----- MAIL SHRUNK STRIP ----- */
+    .mail-group {
+      width: 100%;
+      padding: 0.6rem 1rem;
+    }
+    .mail-group .tile-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .mail-group .tile {
+      padding: 0.5rem 0.4rem;
+      flex-direction: row;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+    .mail-group .icon {
+      width: 2rem;
+      height: 2rem;
+    }
+    .mail-group .icon img {
+      width: 1.2rem;
+      height: 1.2rem;
+    }
+    .mail-group .tile span {
+      font-size: 0.75rem;
+    }
+
+    /* ----- BOTTOM GROUPS ----- */
+    .general-group { flex: 1; }
+    .dev-group { flex: 1; }
+    .ai-group { flex: 1; }
+
+    /* ----- TILE STYLES ----- */
+    .tile {
+      text-decoration: none;
+      color: var(--text-primary);
+      background: var(--card-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--card-border);
+      border-radius: 0.9rem;
+      padding: 0.8rem 0.4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      transition: transform var(--transition-smooth), background 0.25s, border-color 0.25s, box-shadow 0.3s;
+      box-shadow: 0 8px 16px -8px rgba(0, 0, 0, 0.5);
+      height: 100%;
+    }
+
+    .tile:hover {
+      transform: translateY(-3px);
+      background: rgba(28, 32, 52, 0.85);
+      border-color: rgba(169, 156, 255, 0.4);
+      box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(169, 156, 255, 0.2) inset;
+    }
+
+    .tile-button {
+      cursor: pointer;
+      font-family: inherit;
+      text-align: center;
+    }
+
+    .icon {
+      width: 2.4rem;
+      height: 2.4rem;
+      border-radius: 0.7rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(32, 36, 56, 0.7);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      transition: background 0.2s, transform 0.3s ease;
+      font-size: 1.2rem;
+    }
+
+    .tile:hover .icon {
+      background: rgba(50, 55, 80, 0.8);
+      transform: scale(1.08);
+    }
+
+    .icon img {
+      width: 1.4rem;
+      height: 1.4rem;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+    }
+
+    .icon-text {
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      letter-spacing: -0.5px;
+    }
+    .brand-mark { width: 1.75rem; height: 1.75rem; display: block; flex: 0 0 auto; overflow: visible; }
+    .mail-group .brand-mark { width: 1.45rem; height: 1.45rem; }
+/* Scalable font size for tile text to keep it readable on zoom out */
+    .tile span {
+      font-size: clamp(0.6rem, 1.5vw, 0.8rem);
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      color: #e6e9f5;
+      text-align: center;
+    }
+
+    /* Blackout specific */
+    .blackout-tile {
+      width: 100%;
+      flex-direction: row;
+      justify-content: center;
+      gap: 1rem;
+      padding: 0.8rem;
+      background: rgba(40, 44, 70, 0.5);
+    }
+    
+    .blackout-tile .icon {
+      width: 2rem;
+      height: 2rem;
+    }
+    
+    .blackout-tile span {
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    /* ----- FOOTER ----- */
+    .footer {
+      margin-top: 1rem;
+      color: #4a4f64;
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      font-weight: 400;
+      animation: fadeUp 1.1s 0.35s ease both;
+    }
+
+    /* ----- ANIMATIONS ----- */
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateY(16px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ----- STEALTH WIDGET (FIXED TOP LEFT) ----- */
+    #stealth-widget {
+      position: fixed;
+      top: 1.5rem;
+      left: 1.5rem;
+      background: rgba(18, 21, 33, 0.95);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--card-border);
+      border-radius: 1rem;
+      padding: 0.8rem 1rem;
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      max-width: 350px;
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    #stealth-widget.has-new {
+      border-color: var(--lime-green);
+      box-shadow: 0 0 20px var(--lime-glow);
+    }
+
+    .widget-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      user-select: none;
+      cursor: pointer; /* Crucial for clickable feel */
+    }
+
+    .widget-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      transition: background 0.3s;
+    }
+
+    #stealth-widget.has-new .widget-dot {
+      background: var(--lime-green);
+      box-shadow: 0 0 8px var(--lime-green);
+      animation: pulseDot 2s infinite;
+    }
+
+    @keyframes pulseDot {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .widget-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .chevron {
+      font-size: 0.6rem;
+      transition: transform 0.3s;
+    }
+
+    #stealth-widget.expanded .chevron {
+      transform: rotate(180deg);
+    }
+
+    /* Content is hidden by default, shown when .expanded is added */
+    .widget-content {
+      display: none;
+      margin-top: 0.8rem;
+      flex-direction: column;
+      gap: 0.6rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 0.8rem;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    #stealth-widget.expanded .widget-content {
+      display: flex;
+    }
+
+    .stealth-item {
+      font-size: 0.75rem;
+      line-height: 1.4;
+      color: var(--text-primary);
+    }
+
+    .stealth-name {
+      color: var(--text-primary);
+      font-weight: 600;
+      display: block;
+      margin-bottom: 0.1rem;
+    }
+
+    .stealth-desc {
+      color: var(--text-muted);
+      font-size: 0.65rem;
+      display: block;
+    }
+
+    .stealth-platform {
+      display: inline-block;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 0.1rem 0.4rem;
+      border-radius: 0.4rem;
+      font-size: 0.6rem;
+      color: var(--accent-soft);
+      margin-top: 0.2rem;
+      font-weight: 600;
+    }
+
+    .stealth-site-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      margin-top: 0.25rem;
+      padding: 0.48rem 0.7rem;
+      border: 1px solid rgba(0, 209, 255, 0.28);
+      border-radius: 0.55rem;
+      background: rgba(0, 209, 255, 0.08);
+      color: var(--accent-soft);
+      font-size: 0.68rem;
+      font-weight: 650;
+      letter-spacing: 0.025em;
+      text-decoration: none;
+      transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+      flex: 0 0 auto;
+    }
+    .stealth-site-link:hover {
+      background: rgba(0, 209, 255, 0.16);
+      border-color: rgba(0, 209, 255, 0.55);
+      transform: translateY(-1px);
+    }
+    .stealth-site-link svg {
+      width: 0.8rem;
+      height: 0.8rem;
+      flex: 0 0 auto;
+    }
+
+    /* ----- RESPONSIVE ----- */
+    @media (max-width: 800px) {
+      .dashboard-row {
+        flex-direction: column;
+      }
+      .mail-group .tile-grid, .ai-group .tile-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .mail-group .tile {
+        flex-direction: column;
+      }
+      body { overflow: auto; }
+      
+      #stealth-widget {
+        top: 1rem;
+        left: 1rem;
+        right: 1rem;
+        max-width: none;
+      }
+    }
+  
+    .icon img.custom-brand-icon {
+      width: 1.85rem;
+      height: 1.85rem;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 0.35rem;
+      filter: none;
+      display: block;
+    }
+
+  
+    .icon > img.custom-brand-icon {
+      display: block !important;
+      visibility: visible;
+      opacity: 1;
+      width: 1.85rem !important;
+      height: 1.85rem !important;
+      min-width: 1.85rem;
+      min-height: 1.85rem;
+      object-fit: contain;
+      flex: 0 0 1.85rem;
+      border-radius: 0.35rem;
+      filter: none !important;
+    }
+
+  </style>
+</head>
+<body>
+  <!-- fullscreen blackout overlay -->
+  <div class="blackout-exit" id="blackoutExit" title="Double-click anywhere to exit blackout">
+    <div class="hint">double-click anywhere to exit</div>
+  </div>
+
+  <!-- STEALTH WIDGET (Standard DIV with JS Toggle) -->
+  <div id="stealth-widget">
+    <div class="widget-header" onclick="toggleWidget(event)">
+      <div class="widget-dot"></div>
+      <div class="widget-title">
+        Stealth Models <span id="stealth-count" style="opacity:0.6; font-weight:400;">(3)</span>
+        <span class="chevron">▼</span>
+      </div>
+    </div>
+    <div class="widget-content" id="stealth-list">
+      <!-- HARDCODED FALLBACK so it ALWAYS shows something -->
+      <div class="stealth-item">
+        <span class="stealth-name">Crouton Alpha</span>
+        <span class="stealth-desc">A free stealth model with a 1M token context and multimodal input.</span>
+        <span class="stealth-platform">OpenRouter & OpenCode</span>
+      </div>
+      <div class="stealth-item">
+        <span class="stealth-name">Iceman Contributor</span>
+        <span class="stealth-desc">Free tokens on OpenCode Go. Reasoning, tool calls, 262K context.</span>
+        <span class="stealth-platform">OpenCode Go</span>
+      </div>
+      <div class="stealth-item">
+        <span class="stealth-name">Glyph Cluster</span>
+        <span class="stealth-desc">256K context, function calling and streamed replies.</span>
+        <span class="stealth-platform">Vercel & Command Code</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- GREETING -->
+    <div id="greeting"></div>
+
+    <!-- CLOCK -->
+    <div class="clock" id="clock">--:--</div>
+    <div class="date" id="date">SYDNEY, AUSTRALIA</div>
+
+    <!-- WEATHER CARD -->
+    <div class="weather" onclick="updateWeather()" style="cursor: pointer;" title="Click to refresh weather">
+      <div class="weather-icon" id="weatherIcon">☀️</div>
+      <div class="weather-info">
+        <div class="temperature" id="temperature">--°C</div>
+        <div class="conditions" id="conditions">Loading weather…</div>
+        <div class="weather-location">SYDNEY, AUSTRALIA</div>
+      </div>
+      <div class="weather-extra">
+        Feels like <strong id="feels">--°</strong><br>
+        Wind <strong id="wind">-- km/h</strong><br>
+        Humidity <strong id="humidity">--%</strong>
+      </div>
+    </div>
+
+    <!-- ADVANCED SEARCH BAR -->
+    <div class="search-wrapper">
+      <form class="search-form" id="searchForm" onsubmit="event.preventDefault(); triggerSearch();">
+        <input type="text" id="searchInput" placeholder="Search the web..." autocomplete="off" autofocus oninput="handleInput(this.value)">
+        
+        <div class="dropdown-container">
+          <button type="button" class="search-engine-btn" id="engineBtn" onclick="toggleDropdown(event)">
+            <span id="engineName">Qwant</span>
+            <span style="font-size: 0.5rem; opacity: 0.7;">▼</span>
+          </button>
+          <div class="dropdown-menu" id="engineDropdown">
+            <div class="dropdown-item" onclick="setEngine('Qwant', 'https://www.qwant.com/?q=')">Qwant</div>
+            <div class="dropdown-item" onclick="setEngine('Google', 'https://www.google.com/search?q=')">Google</div>
+            <div class="dropdown-item" onclick="setEngine('Bing', 'https://www.bing.com/search?q=')">Bing</div>
+            <div class="dropdown-item" onclick="setEngine('DuckDuckGo', 'https://duckduckgo.com/?q=')">DuckDuckGo</div>
+            <div class="dropdown-item" onclick="setEngine('Ecosia', 'https://www.ecosia.org/search?q=')">Ecosia</div>
+          </div>
+        </div>
+      </form>
+
+      <!-- Slash Commands Menu -->
+      <div class="slash-menu" id="slashMenu">
+        <div class="slash-item" onclick="runSlashCommand('yt', 'YouTube', 'https://www.youtube.com/results?search_query=')">
+          <span class="cmd">/yt</span> Search YouTube
+        </div>
+        <div class="slash-item" onclick="runSlashCommand('gh', 'GitHub', 'https://github.com/search?q=')">
+          <span class="cmd">/gh</span> Search GitHub
+        </div>
+        <div class="slash-item" onclick="runSlashCommand('ask', 'Perplexity', 'https://www.perplexity.ai/search?q=')">
+          <span class="cmd">/ask</span> Ask Perplexity
+        </div>
+        <div class="slash-item" onclick="runSlashCommand('gpt', 'ChatGPT', 'https://chatgpt.com/?q=')">
+          <span class="cmd">/gpt</span> Ask ChatGPT
+        </div>
+        <div class="slash-item" onclick="runSlashCommand('claude', 'Claude', 'https://claude.ai/new?q=')">
+          <span class="cmd">/claude</span> Ask Claude
+        </div>
+        <div class="slash-item" onclick="runSlashCommand('deepl', 'DeepL', 'https://www.deepl.com/translator#en/auto/')">
+          <span class="cmd">/deepl</span> Translate with DeepL
+        </div>
+        <div class="slash-item" onclick="runSlashCommand('black', '', '')">
+          <span class="cmd">/black</span> Trigger BlankScreen
+        </div>
+      </div>
+    </div>
+
+    <!-- BENTO DASHBOARD -->
+    <div class="dashboard-container">
+      
+      <!-- ROW 1: Mail (Shrunk Horizontal Strip) -->
+      <div class="dashboard-row">
+        <div class="category-group mail-group">
+          <div class="category-title">Mail</div>
+          <div class="tile-grid">
+            <a class="tile" href="https://mail.google.com/" target="_blank" rel="noopener">
+              <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Gmail" xmlns="http://www.w3.org/2000/svg"><path fill="#EA4335" d="M5 12.5 24 27 43 12.5V38H5z"/><path fill="none" stroke="#fff" stroke-width="5" stroke-linejoin="round" d="M5 14 24 29 43 14"/></svg></div>
+              <span>Gmail</span>
+            </a>
+            <a class="tile" href="https://outlook.live.com/" target="_blank" rel="noopener">
+              <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Outlook" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="9" width="38" height="30" rx="5" fill="#0877D1"/><path d="m7 13 17 14 17-14" fill="none" stroke="#fff" stroke-width="3.5"/><rect x="3" y="14" width="18" height="20" rx="3" fill="#185ABD"/><path d="M8 19h8v10H8z" fill="#fff" opacity=".9"/></svg></div>
+              <span>Outlook</span>
+            </a>
+            <a class="tile" href="https://proton.me/mail" target="_blank" rel="noopener">
+              <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="ProtonMail" xmlns="http://www.w3.org/2000/svg"><path fill="#6D4AFF" d="M24 5 43 16v17L24 44 5 33V16z"/><path fill="none" stroke="#fff" stroke-width="3.2" stroke-linejoin="round" d="m9 17 15 11 15-11M9 33l10-8m20 8L29 25"/></svg></div>
+              <span>ProtonMail</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROW 2: General, Dev & API, AI -->
+      <div class="dashboard-row">
+        
+        <div class="category-group general-group">
+          <div class="category-title">General</div>
+          <div class="tile-grid">
+            <a class="tile" href="https://youtube.com/" target="_blank" rel="noopener">
+              <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="YouTube" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="10" width="40" height="28" rx="8" fill="#FF0033"/><path d="m20 17 13 7-13 7z" fill="#fff"/></svg></div>
+              <span>YouTube</span>
+            </a>
+            <a class="tile" href="https://reddit.com/" target="_blank" rel="noopener">
+              <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Reddit" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="25" r="18" fill="#FF4500"/><path d="m17 25 3 2m11-2-3 2" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="18" cy="23" r="2.2" fill="#fff"/><circle cx="30" cy="23" r="2.2" fill="#fff"/><path d="M17 31q7 6 14 0" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><path d="m25 8 5 2" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><circle cx="31" cy="10" r="3" fill="#fff"/></svg></div>
+              <span>Reddit</span>
+            </a>
+            <a class="tile" href="https://soundcloud.com/" target="_blank" rel="noopener">
+              <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="SoundCloud" xmlns="http://www.w3.org/2000/svg"><path fill="#FF5500" d="M5 29h4v8H5zm6-6h4v14h-4zm6-7h4v21h-4zm6-3h4v24h-4zm6 5h4v19h-4zm6 5h4v14h-4zm2 0a9 9 0 0 1 0 18h-2V23z"/></svg></div>
+              <span>SoundCloud</span>
+            </a>
+            <a class="tile" href="https://discord.com/app" target="_blank" rel="noopener">
+              <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Discord" xmlns="http://www.w3.org/2000/svg"><path fill="#5865F2" d="M12 10q12-6 24 0l6 25q-8 7-13 5l-2-3q-3 1-6 0l-2 3q-6 1-13-5z"/><circle cx="18" cy="25" r="3" fill="#fff"/><circle cx="31" cy="25" r="3" fill="#fff"/><path d="M17 33q7 5 15 0" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+              <span>Discord</span>
+            </a>
+            <a class="tile" href="https://twitch.tv/" target="_blank" rel="noopener">
+              <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Twitch" xmlns="http://www.w3.org/2000/svg"><path fill="#9146FF" d="M9 5H43v25L31 41H22l-7 5v-8H5V12z"/><path fill="#fff" d="M13 10h25v18l-8 8h-8l-5 4v-6h-4z"/><path fill="#9146FF" d="M20 15h4v11h-4zm10 0h4v11h-4z"/></svg></div>
+              <span>Twitch</span>
+            </a>
+            <a class="tile" href="https://store.steampowered.com/" target="_blank" rel="noopener">
+              <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Steam" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="21" fill="#fff"/><circle cx="31" cy="17" r="8" fill="#171D25"/><circle cx="31" cy="17" r="4.5" fill="#fff"/><path d="m7 27 13 6 5-7" fill="none" stroke="#171D25" stroke-width="5" stroke-linecap="round"/><circle cx="17" cy="34" r="6" fill="#171D25"/><circle cx="17" cy="34" r="3" fill="#fff"/></svg></div>
+              <span>Steam</span>
+            </a>
+            <a class="tile" href="https://railscope.pages.dev/" target="_blank" rel="noopener">
+              <div class="icon" style="font-size: 1.2rem; color: #60a5fa;">🚆</div>
+              <span>Railscope</span>
+            </a>
+            <a class="tile" href="https://psyde-chat.pages.dev/" target="_blank" rel="noopener">
+              <div class="icon" style="font-size: 1.2rem; color: #a78bfa;">🧠</div>
+              <span>Psydechat</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="category-group dev-group">
+          <div class="category-title">Dev & API</div>
+          <div class="tile-grid">
+            <a class="tile" href="https://github.com/" target="_blank" rel="noopener">
+              <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="GitHub" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M24 5a19 19 0 0 0-6 37c1 .2 1.4-.4 1.4-1v-4c-5.8 1.3-7-2.4-7-2.4-1-2.4-2.3-3-2.3-3-1.9-1.3.2-1.3.2-1.3 2.1.2 3.2 2.2 3.2 2.2 1.9 3.2 4.9 2.3 6.1 1.8.2-1.4.7-2.3 1.3-2.8-4.6-.5-9.4-2.3-9.4-10.2 0-2.3.8-4.1 2.2-5.6-.2-.5-1-2.7.2-5.6 0 0 1.8-.6 5.9 2.1a20 20 0 0 1 10.8 0c4.1-2.7 5.9-2.1 5.9-2.1 1.2 2.9.4 5.1.2 5.6 1.4 1.5 2.2 3.3 2.2 5.6 0 7.9-4.8 9.7-9.4 10.2.7.6 1.4 1.7 1.4 3.5V41c0 .6.4 1.2 1.4 1A19 19 0 0 0 24 5z"/></svg></div>
+              <span>GitHub</span>
+            </a>
+            <a class="tile" href="https://dash.cloudflare.com/" target="_blank" rel="noopener">
+              <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Cloudflare" xmlns="http://www.w3.org/2000/svg"><path fill="#F38020" d="M10 34h27a7 7 0 0 0 0-14h-1a13 13 0 0 0-25-2 8 8 0 0 0-1 16z"/><path fill="#FAAE40" d="M8 37h29a5 5 0 0 0 0-10H13a5 5 0 0 0-5 10z"/></svg></div>
+              <span>Cloudflare</span>
+            </a>
+            <a class="tile" href="https://render.com/" target="_blank" rel="noopener">
+              <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Render" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M8 7h22a11 11 0 0 1 0 22H20v12H8zm12 10v4h10a2 2 0 0 0 0-4z"/></svg></div>
+              <span>Render</span>
+            </a>
+            <a class="tile" href="https://openrouter.ai/" target="_blank" rel="noopener">
+              <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="OpenRouter" xmlns="http://www.w3.org/2000/svg"><path fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M9 12h17a8 8 0 0 1 8 8v1m-7-6 7 6 7-6M9 36h13a8 8 0 0 0 8-8v-1"/></svg></div>
+              <span>OpenRouter</span>
+            </a>
+            <a class="tile" href="https://vercel.com/" target="_blank" rel="noopener">
+              <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Vercel" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M24 5 46 43H2z"/></svg></div>
+              <span>Vercel</span>
+            </a>
+            <a class="tile" href="https://supabase.com/" target="_blank" rel="noopener">
+              <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Supabase" xmlns="http://www.w3.org/2000/svg"><path fill="#3ECF8E" d="M26 5 8 27h14l-2 16 20-25H26z"/></svg></div>
+              <span>Supabase</span>
+            </a>
+            <a class="tile" href="https://portal.nousresearch.com/" target="_blank" rel="noopener">
+              <div class="icon">
+                <img class="brand-mark custom-brand-icon" src="https://pbs.twimg.com/profile_images/1816254738234761216/TX7TW-Mp.jpg" alt="" aria-label="Nous Portal" title="Nous Portal" referrerpolicy="no-referrer" loading="eager" decoding="async" onerror="if(!this.dataset.proxyTried){this.dataset.proxyTried='1';this.src='https://images.weserv.nl/?url=https%3A%2F%2Fpbs.twimg.com%2Fprofile_images%2F1816254738234761216%2FTX7TW-Mp.jpg'}else{this.style.visibility='hidden'}">
+              </div>
+              <span>Nous Portal</span>
+            </a>
+            <a class="tile" href="https://html.onlineviewer.net/" target="_blank" rel="noopener">
+              <div class="icon" style="font-family: monospace; color: var(--accent-soft); font-weight: bold; font-size: 1.1rem; letter-spacing: -1px;">
+                &lt;/&gt;
+              </div>
+              <span>HTML Viewer</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="category-group ai-group">
+          <div class="category-title">AI</div>
+          <div class="tile-grid">
+            <a class="tile" href="https://chatgpt.com/" target="_blank" rel="noopener">
+              <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="ChatGPT" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 7a9 9 0 0 1 8 5l5 3a9 9 0 0 1 1 9l-1 6a9 9 0 0 1-8 5h-6l-5 3a9 9 0 0 1-8-5l-5-3a9 9 0 0 1-1-9l1-6a9 9 0 0 1 8-5h6z"/><path d="m17 13 14 22M10 19l28 10M10 30l21-17"/></g></svg></div>
+              <span>ChatGPT</span>
+            </a>
+            <a class="tile" href="https://claude.ai/" target="_blank" rel="noopener">
+              <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Claude" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="#D97757" stroke-width="3" stroke-linecap="round"><path d="M24 4v40M4 24h40M10 10l28 28M38 10 10 38"/><path d="m24 4 3 8-3-2-3 2zM44 24l-8 3 2-3-2-3zM24 44l-3-8 3 2 3-2zM4 24l8-3-2 3 2 3z" fill="#D97757"/></g></svg></div>
+              <span>Claude</span>
+            </a>
+            <a class="tile" href="https://gemini.google.com/" target="_blank" rel="noopener">
+              <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Gemini" xmlns="http://www.w3.org/2000/svg"><path fill="#8AB4F8" d="M24 3c2 11 7 16 21 21-14 3-19 8-21 21C21 32 16 27 3 24 16 21 21 16 24 3z"/><path fill="#C58AF9" d="M37 4c1 5 3 7 8 8-5 1-7 3-8 8-1-5-3-7-8-8 5-1 7-3 8-8z"/></svg></div>
+              <span>Gemini</span>
+            </a>
+            <a class="tile" href="https://chat.deepseek.com/" target="_blank" rel="noopener">
+              <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Deepseek" xmlns="http://www.w3.org/2000/svg"><path fill="#4D6BFE" d="M5 29q7-15 17-8 8-12 21-3-10-1-13 8 8 1 13 10-13-5-20-1-9 5-18-6z"/><circle cx="29" cy="20" r="2" fill="#fff"/></svg></div>
+              <span>Deepseek</span>
+            </a>
+            <a class="tile" href="https://chat.qwen.ai/" target="_blank" rel="noopener">
+              <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Qwen" xmlns="http://www.w3.org/2000/svg"><path fill="#8B7CFF" d="M8 13q0-7 8-7h16q8 0 8 7v17q0 7-8 7H20l-8 6v-7q-4-2-4-7z"/><path d="M17 19h14M17 26h9" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg></div>
+              <span>Qwen</span>
+            </a>
+            <a class="tile" href="https://kimi.moonshot.cn/" target="_blank" rel="noopener">
+              <div class="icon">
+                <img class="brand-mark custom-brand-icon" src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/kimi-ai-icon.png" alt="" aria-label="Kimi" title="Kimi" referrerpolicy="no-referrer" loading="eager" decoding="async" onerror="if(!this.dataset.proxyTried){this.dataset.proxyTried='1';this.src='https://images.weserv.nl/?url=https%3A%2F%2Fuxwing.com%2Fwp-content%2Fthemes%2Fuxwing%2Fdownload%2Fbrands-and-social-media%2Fkimi-ai-icon.png'}else{this.style.visibility='hidden'}">
+              </div>
+              <span>Kimi</span>
+            </a>
+            <a class="tile" href="https://chatglm.cn/" target="_blank" rel="noopener">
+              <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="GLM" xmlns="http://www.w3.org/2000/svg"><path fill="#26B3A4" d="M24 4 43 15v18L24 44 5 33V15z"/><path d="M15 24h18m-9-9 9 9-9 9" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span>GLM</span>
+            </a>
+            <a class="tile" href="https://aistudio.google.com/" target="_blank" rel="noopener">
+              <div class="icon"><img class="brand-mark custom-brand-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Google_AI_Studio_icon_%28May_2026%29.svg/1280px-Google_AI_Studio_icon_%28May_2026%29.svg.png" alt="" aria-label="AI Studio" title="AI Studio" referrerpolicy="no-referrer" loading="eager" decoding="async" onerror="if(!this.dataset.proxyTried){this.dataset.proxyTried='1';this.src='https://images.weserv.nl/?url=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F7%2F77%2FGoogle_AI_Studio_icon_%2528May_2026%2529.svg%2F1280px-Google_AI_Studio_icon_%2528May_2026%2529.svg.png'}else{this.style.visibility='hidden'}"></div>
+              <span>AI Studio</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ROW 3: Full Width Blackout Button -->
+      <div class="dashboard-row">
+        <button class="tile tile-button blackout-tile" id="blackoutBtn">
+          <div class="icon" style="background: rgba(40, 44, 70, 0.9);">
+            <span style="font-size: 0.9rem;">⬛</span>
+          </div>
+          <span>BlankScreen · full black</span>
+        </button>
+      </div>
+
+    </div>
+
+    <div class="footer">YOUR SPACE · YOUR INTERNET</div>
+  </div>
+
+  <script>
+    // ---------- SYDNEY CLOCK & GREETING ----------
+    function updateClock() {
+      const now = new Date();
+
+      document.getElementById('clock').textContent = now.toLocaleTimeString('en-AU', {
+        timeZone: 'Australia/Sydney',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+
+      const dateStr = now.toLocaleDateString('en-AU', {
+        timeZone: 'Australia/Sydney',
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      }).toUpperCase();
+      document.getElementById('date').textContent = dateStr + ' · SYDNEY (AEST)';
+
+      const hour = parseInt(now.toLocaleTimeString('en-AU', { 
+        timeZone: 'Australia/Sydney', 
+        hour12: false, 
+        hour: 'numeric' 
+      }));
+      
+      let greeting = "Good evening";
+      if (hour >= 4 && hour < 12) greeting = "Good morning";
+      else if (hour >= 12 && hour < 18) greeting = "Good afternoon";
+      
+      const greetingEl = document.getElementById('greeting');
+      if (greetingEl.textContent !== greeting) {
+        greetingEl.textContent = greeting;
+      }
+    }
+
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // ---------- SYDNEY WEATHER ----------
+    async function updateWeather() {
+      const url = 'https://api.open-meteo.com/v1/forecast' +
+        '?latitude=-33.8688' +
+        '&longitude=151.2093' +
+        '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m' +
+        '&timezone=Australia%2FSydney';
+
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Weather request failed');
+        const data = await response.json();
+        const current = data.current;
+
+        const code = current.weather_code;
+        const weatherMap = {
+          0: ['☀️', 'Clear sky'], 1: ['🌤️', 'Mainly clear'], 2: ['⛅', 'Partly cloudy'],
+          3: ['☁️', 'Overcast'], 45: ['🌫️', 'Foggy'], 48: ['🌫️', 'Rime fog'],
+          51: ['🌦️', 'Light drizzle'], 53: ['🌦️', 'Drizzle'], 55: ['🌧️', 'Heavy drizzle'],
+          61: ['🌧️', 'Light rain'], 63: ['🌧️', 'Rain'], 65: ['🌧️', 'Heavy rain'],
+          71: ['🌨️', 'Light snow'], 73: ['❄️', 'Snow'], 75: ['❄️', 'Heavy snow'],
+          80: ['🌦️', 'Rain showers'], 81: ['🌧️', 'Showers'], 82: ['⛈️', 'Heavy showers'],
+          95: ['⛈️', 'Thunderstorm'], 96: ['⛈️', 'Thunderstorm with hail'], 99: ['⛈️', 'Severe thunderstorm']
+        };
+
+        const [emoji, conditionText] = weatherMap[code] || ['🌡️', 'Current conditions'];
+
+        document.getElementById('weatherIcon').textContent = emoji;
+        document.getElementById('temperature').textContent = Math.round(current.temperature_2m) + '°C';
+        document.getElementById('conditions').textContent = conditionText;
+        document.getElementById('feels').textContent = Math.round(current.apparent_temperature) + '°C';
+        document.getElementById('wind').textContent = Math.round(current.wind_speed_10m) + ' km/h';
+        document.getElementById('humidity').textContent = current.relative_humidity_2m + '%';
+
+      } catch (error) {
+        document.getElementById('conditions').textContent = 'Weather temporarily unavailable';
+      }
+    }
+
+    updateWeather();
+    setInterval(updateWeather, 15 * 60 * 1000);
+
+    // ---------- SEARCH ENGINE DROPDOWN ----------
+    let activeSearchUrl = 'https://www.qwant.com/?q=';
+
+    function toggleDropdown(e) {
+      e.stopPropagation();
+      document.getElementById('engineDropdown').classList.toggle('active');
+      document.getElementById('slashMenu').classList.remove('active');
+    }
+
+    function setEngine(name, url) {
+      document.getElementById('engineName').textContent = name;
+      activeSearchUrl = url;
+      document.getElementById('engineDropdown').classList.remove('active');
+      document.getElementById('searchInput').focus();
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.dropdown-container')) {
+        document.getElementById('engineDropdown').classList.remove('active');
+      }
+      if (!e.target.closest('.search-wrapper')) {
+        document.getElementById('slashMenu').classList.remove('active');
+      }
+    });
+
+    // ---------- SLASH COMMANDS ----------
+    const searchInput = document.getElementById('searchInput');
+    const slashMenu = document.getElementById('slashMenu');
+
+    function handleInput(val) {
+      if (val.startsWith('/')) {
+        slashMenu.classList.add('active');
+      } else {
+        slashMenu.classList.remove('active');
+      }
+    }
+
+    function runSlashCommand(cmd, engineName, url) {
+      slashMenu.classList.remove('active');
+      searchInput.value = '';
+      
+      if (cmd === 'black') {
+        enterBlackout();
+        return;
+      }
+
+      activeSearchUrl = url;
+      document.getElementById('engineName').textContent = engineName;
+      searchInput.placeholder = `Search ${engineName}...`;
+      searchInput.focus();
+    }
+
+    function triggerSearch() {
+      const query = searchInput.value.trim();
+      if (query) {
+        window.location.href = activeSearchUrl + encodeURIComponent(query);
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '/' || (e.metaKey && e.key === 'k') || (e.ctrlKey && e.key === 'k')) {
+        if (document.activeElement.tagName !== 'INPUT') {
+          e.preventDefault();
+          searchInput.focus();
+        }
+      }
+    });
+
+    // ---------- STEALTH WIDGET LOGIC ----------
+    const stealthWidget = document.getElementById('stealth-widget');
+    const stealthList = document.getElementById('stealth-list');
+    const stealthCount = document.getElementById('stealth-count');
+
+    // Keep fallback data in sync with the hardcoded HTML above.
+    const FALLBACK_STEALTH_MODELS = [
+      {
+        name: 'Crouton Alpha',
+        description: 'A free stealth model with a 1M token context and multimodal input.',
+        platform: 'OpenRouter & OpenCode'
+      },
+      {
+        name: 'Iceman Contributor',
+        description: 'Free tokens on OpenCode Go. Reasoning, tool calls, 262K context.',
+        platform: 'OpenCode Go'
+      },
+      {
+        name: 'Glyph Cluster',
+        description: '256K context, function calling and streamed replies.',
+        platform: 'Vercel & Command Code'
+      }
+    ];
+
+    window.currentStealthModels = FALLBACK_STEALTH_MODELS;
+
+    function getSeenModels() {
+      try {
+        const stored = localStorage.getItem('stealth_seen');
+        const parsed = stored ? JSON.parse(stored) : [];
+        return Array.isArray(parsed) ? parsed.filter(name => typeof name === 'string') : [];
+      } catch (error) {
+        console.warn('Could not read seen stealth models:', error);
+        return [];
+      }
+    }
+
+    function saveSeenModels(models) {
+      try {
+        localStorage.setItem(
+          'stealth_seen',
+          JSON.stringify(models.map(model => model.name))
+        );
+      } catch (error) {
+        console.warn('Storage unavailable; seen models will not persist:', error);
+      }
+    }
+
+    function renderStealthModels(models) {
+      // Build nodes instead of interpreting API-provided strings as HTML.
+      const fragment = document.createDocumentFragment();
+
+      models.forEach(model => {
+        const item = document.createElement('div');
+        item.className = 'stealth-item';
+
+        const name = document.createElement('span');
+        name.className = 'stealth-name';
+        name.textContent = String(model.name ?? 'Unnamed model');
+
+        const description = document.createElement('span');
+        description.className = 'stealth-desc';
+        description.textContent = String(model.description ?? '');
+
+        const platform = document.createElement('span');
+        platform.className = 'stealth-platform';
+        platform.textContent = String(model.platform ?? 'Unknown platform');
+
+        item.append(name, description, platform);
+        fragment.appendChild(item);
+      });
+
+      const siteLink = document.createElement('a');
+      siteLink.className = 'stealth-site-link';
+      siteLink.href = 'https://stealthmodels.com/models';
+      siteLink.target = '_blank';
+      siteLink.rel = 'noopener noreferrer';
+      siteLink.setAttribute('aria-label', 'Visit Stealth Models website');
+      siteLink.innerHTML = '<span>Visit Stealth Models</span><svg viewBox="0 0 16 16" aria-hidden="true" fill="none"><path d="M6 3h7v7M13 3 6 10M11 9v4H3V5h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      fragment.appendChild(siteLink);
+
+      stealthList.replaceChildren(fragment);
+      stealthCount.textContent = `(${models.length})`;
+    }
+
+    // Clicking the header toggles the widget and marks current models as seen.
+    function toggleWidget(e) {
+      if (e) e.stopPropagation();
+      stealthWidget.classList.toggle('expanded');
+
+      if (stealthWidget.classList.contains('expanded')) {
+        stealthWidget.classList.remove('has-new');
+        saveSeenModels(window.currentStealthModels || []);
+      }
+    }
+
+    // Close widget if clicking anywhere outside.
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#stealth-widget') && stealthWidget.classList.contains('expanded')) {
+        stealthWidget.classList.remove('expanded');
+      }
+    });
+
+    async function checkStealthModels() {
+      const WORKER_URL = 'https://stealth.ayanzahnon.workers.dev/';
+
+      try {
+        const response = await fetch(WORKER_URL);
+        if (!response.ok) throw new Error(`Worker request failed (${response.status})`);
+
+        const models = await response.json();
+        if (!Array.isArray(models) || models.length === 0) {
+          throw new Error('Worker returned no models');
+        }
+
+        // Normalize and validate the fields used by the UI.
+        const safeModels = models
+          .filter(model => model && typeof model === 'object')
+          .map(model => ({
+            name: String(model.name ?? 'Unnamed model'),
+            description: String(model.description ?? ''),
+            platform: String(model.platform ?? 'Unknown platform')
+          }));
+
+        if (safeModels.length === 0) {
+          throw new Error('Worker returned no usable models');
+        }
+
+        window.currentStealthModels = safeModels;
+        renderStealthModels(safeModels);
+
+        const seenModels = getSeenModels();
+        const hasNewModel = safeModels.some(model => !seenModels.includes(model.name));
+
+        if (hasNewModel && !stealthWidget.classList.contains('expanded')) {
+          stealthWidget.classList.add('has-new');
+        }
+      } catch (error) {
+        // Keep the last successfully rendered models (or initial fallbacks) visible.
+        console.warn('Stealth model refresh failed; keeping existing models:', error);
+      }
+    }
+
+    // Show fallback data immediately, then fetch and refresh periodically.
+    renderStealthModels(FALLBACK_STEALTH_MODELS);
+    checkStealthModels();
+    setInterval(checkStealthModels, 30 * 60 * 1000);
+
+    // ---------- FULLSCREEN BLACKOUT ----------
+    const body = document.body;
+    const blackoutBtn = document.getElementById('blackoutBtn');
+    const blackoutExit = document.getElementById('blackoutExit');
+    let isBlackout = false;
+
+    function enterBlackout() {
+      if (isBlackout) return;
+      isBlackout = true;
+      body.classList.add('blackout-mode');
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else if (document.documentElement.webkitRequestFullscreen) {
+        document.documentElement.webkitRequestFullscreen().catch(() => {});
+      }
+    }
+
+    function exitBlackout() {
+      if (!isBlackout) return;
+      isBlackout = false;
+      body.classList.remove('blackout-mode');
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
+      } else if (document.webkitFullscreenElement) {
+        document.webkitExitFullscreen().catch(() => {});
+      }
+    }
+
+    blackoutBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      enterBlackout();
+    });
+
+    blackoutExit.addEventListener('dblclick', exitBlackout);
+    blackoutExit.addEventListener('click', (e) => {
+      if (e.target.classList.contains('hint')) exitBlackout();
+    });
+
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement && isBlackout) exitBlackout();
+    });
+
+    document.addEventListener('webkitfullscreenchange', () => {
+      if (!document.webkitFullscreenElement && isBlackout) exitBlackout();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isBlackout) exitBlackout();
+    });
+  </script>
+</body>
+</html>
