@@ -1,8 +1,27 @@
-# 🪐Nu Tab
+# 🪐 Nu Tab
 
-A sleek, fully customizable, Bento-style dashboard for your browser. Built with vanilla HTML, CSS, and JavaScript, this new tab page replaces your default homepage with a beautiful, functional workspace.
+A sleek, fully customizable, Bento-style dashboard for your browser. Built with vanilla HTML, CSS, and JavaScript, Nu Tab replaces your default homepage with a beautiful, functional workspace.
 
-![Aesthetic New Tab Preview](https://nu-tab.pages.dev/preview.png)
+![Nu Tab Preview](https://nu-tab.pages.dev/preview.png)
+
+---
+
+## 🔥 How to set as your New Tab
+
+The easiest way to use Nu Tab is to visit the live URL: **[nu-tab.pages.dev](https://nu-tab.pages.dev/)**
+
+To make it open automatically when you open a new tab, use one of the methods below:
+
+### Method 1: Browser Settings (Homepage)
+If you just want it to open when you click the "Home" button or launch your browser:
+- **Chrome / Edge / Brave:** Go to `Settings` > `On startup` > Select **Open a specific page or set of pages** > Click **Add a new page** and paste `https://nu-tab.pages.dev/`.
+- **Firefox:** Go to `Settings` > `Home` > Under **Homepage and new windows**, select **Custom URLs** and paste the link.
+- **Safari:** Go to `Safari` > `Preferences` > `General` > Set **Homepage** to the URL.
+
+### Method 2: New Tab Override Extensions (Recommended)
+Browsers often lock the *actual* New Tab page (the one you get when you click the `+` button). To force Nu Tab to open there, you need a tiny, free extension.
+- **Chrome / Edge:** Install an extension like **New Tab Redirect** or **New Tab Override** from the Chrome Web Store, and set the redirect URL to `https://nu-tab.pages.dev/`.
+- **Firefox:** Install **New Tab Override** from Firefox Add-ons. It allows you to set a custom URL for the new tab page directly in its settings.
 
 ---
 
@@ -15,28 +34,6 @@ A sleek, fully customizable, Bento-style dashboard for your browser. Built with 
 - **👀 Stealth Model Tracker:** A built-in widget that automatically checks for new "stealth" AI models on OpenRouter and OpenCode. It pings a live API and highlights updates with a lime-green dot.
 - **🖤 BlankScreen Mode:** Click the black square next to the search bar to instantly turn your screen into a pure black, distraction-free void. Double-click anywhere to exit.
 - **💾 Saved Locally:** All your settings and custom links are saved to your browser's `localStorage`. No account needed, and your layout stays exactly how you left it.
-
----
-
-## 🚀 How to Use
-
-1. Visit **[nu-tab.pages.dev](https://nu-tab.pages.dev/)** to see it live.
-2. **To make it your homepage:**
-   - **Chrome/Edge:** Go to Settings > On Startup > Open a specific page > Add `https://nu-tab.pages.dev/`.
-   - **Firefox:** Go to Settings > Home > Homepage and set it to `https://nu-tab.pages.dev/`.
-   - **Extensions:** Alternatively, use extensions like *New Tab Override* to redirect your new tab page to this URL.
-
----
-
-## 🛠️ How to Deploy Your Own
-
-Because this is a static site (just a single HTML file), hosting is completely free and takes seconds.
-
-### Cloudflare Pages (Recommended)
-1. Fork this repository or download the files.
-2. Go to [Cloudflare Dashboard](https://dash.cloudflare.com/) > Workers & Pages > Create Application > Pages.
-3. Choose **Connect to Git** (and select your repo) or **Upload assets** (drag and drop the `index.html` and `preview.png`).
-4. Deploy! You will get a free `*.pages.dev` URL.
 
 ---
 
