@@ -52,12 +52,19 @@
       --text-muted: #8b92aa;
       --accent-soft: #a99cff;
       --accent-glow: rgba(139, 124, 255, 0.18);
+      --accent-border: hsla(250, 100%, 70%, 0.4);
       --glass-blur: blur(16px);
       --transition-smooth: 0.25s cubic-bezier(0.2, 0.9, 0.3, 1);
       --lime-green: #a3e635;
       --lime-glow: rgba(163, 230, 53, 0.3);
       --orb-1: #6b5aff;
       --track-bg-sat: linear-gradient(to right, #444, #a99cff);
+      --theme-h: 250;
+      --theme-s: 100%;
+      --theme-gradient: linear-gradient(115deg, #ffffff, #c8c0ff, #9488ff, #8ad2ff, #ffffff);
+      --theme-hover-bg: hsla(250, 100%, 70%, 0.15);
+      --theme-hover-border: hsla(250, 100%, 75%, 0.48);
+      --theme-hover-glow: hsla(250, 100%, 75%, 0.2);
     }
 
     /* ----- FOCUS VISIBILITY ----- */
@@ -72,6 +79,7 @@
 
     body {
       height: 100dvh;
+      min-height: 100dvh;
       background:
         radial-gradient(ellipse at 50% -10%, var(--bg-glow-1) 0%, transparent 60%),
         radial-gradient(ellipse at 100% 100%, var(--bg-glow-2) 0%, transparent 50%),
@@ -79,9 +87,9 @@
       color: var(--text-primary);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       display: flex;
-      align-items: center;
+      align-items: stretch;
       justify-content: center;
-      padding: 1vmin;
+      padding: 0;
       overflow: hidden; 
       position: relative;
       transition: background 0.3s;
@@ -167,9 +175,26 @@
       transition: opacity 0.3s;
       display: flex;
       flex-direction: column;
-      height: 100%;
-      justify-content: center;
-      gap: 1.5vmin;
+      height: 100dvh;
+      min-height: 0;
+      flex: 1 1 auto;
+      align-self: stretch;
+      justify-content: flex-start;
+      gap: clamp(0.55rem, 1.2vmin, 0.9rem);
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding: 0.85rem 0 1rem;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .container::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
+    .weather { flex: 0 0 auto; position: relative; }
+
+    @media (max-height: 760px) and (min-aspect-ratio: 1/1) {
+      .container { gap: 0.6rem; padding-top: 0.5rem; padding-bottom: 0.5rem; }
+      .weather { padding: 0.55rem 1.1rem; gap: 1rem; }
     }
 
     /* ----- WEATHER CARD ----- */
@@ -262,7 +287,7 @@
       font-weight: 600;
       letter-spacing: -0.02em;
       line-height: 1;
-      background: linear-gradient(115deg, #ffffff, #c8c0ff, #9488ff, #8ad2ff, #ffffff);
+      background: var(--theme-gradient);
       background-size: 300% auto;
       -webkit-background-clip: text;
       background-clip: text;
@@ -312,7 +337,7 @@
       display: flex;
       align-items: center;
       background: rgba(14, 16, 26, 0.6);
-      border: 2px solid rgba(139, 124, 255, 0.3);
+      border: 2px solid var(--accent-border);
       border-radius: 4vmin;
       padding: 0.5vmin 0.5vmin 0.5vmin 2vmin;
       backdrop-filter: var(--glass-blur);
@@ -366,7 +391,7 @@
     /* Small Buttons next to search */
     .action-btn {
       background: rgba(14, 16, 26, 0.6);
-      border: 2px solid rgba(139, 124, 255, 0.3);
+      border: 2px solid var(--accent-border);
       border-radius: 4vmin;
       width: 8vmin;
       height: 8vmin;
@@ -384,7 +409,7 @@
     }
 
     .action-btn:hover {
-      background: rgba(139, 124, 255, 0.2);
+      background: var(--accent-glow);
       border-color: var(--accent-soft);
       transform: scale(1.05);
     }
@@ -451,8 +476,9 @@
     }
 
     .dropdown-item:hover, .dropdown-item.selected {
-      background: rgba(139, 124, 255, 0.15);
+      background: var(--theme-hover-bg);
       color: var(--accent-soft);
+      box-shadow: inset 0 0 0 1px var(--theme-hover-border);
     }
 
     @keyframes dropdownOpen {
@@ -497,7 +523,8 @@
     }
 
     .slash-item:hover, .slash-item.selected {
-      background: rgba(139, 124, 255, 0.15);
+      background: var(--theme-hover-bg);
+      box-shadow: inset 0 0 0 1px var(--theme-hover-border);
     }
 
     .slash-item span.cmd {
@@ -517,7 +544,7 @@
       flex-direction: column;
       gap: 1.5vmin;
       width: 100%;
-      margin: auto;
+      margin: 0 auto;
       animation: fadeUp 1s 0.3s ease both;
       text-align: left;
       flex-shrink: 0;
@@ -613,8 +640,8 @@
     .tile:hover {
       transform: translateY(-0.5vmin);
       background: rgba(28, 32, 52, 0.85);
-      border-color: rgba(169, 156, 255, 0.4);
-      box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(169, 156, 255, 0.2) inset;
+      border-color: var(--theme-hover-border);
+      box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.7), 0 0 0 1px var(--theme-hover-glow) inset, 0 0 18px var(--theme-hover-glow);
     }
 
     .tile:active {
@@ -1062,9 +1089,19 @@
       transition: border-color 0.2s;
     }
 
-    .input-group input:focus {
+    .input-group input:focus, .input-group select:focus {
       border-color: var(--accent-soft);
     }
+
+    .input-group select {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 0.5rem;
+      padding: 0.8rem 1rem;
+      color: white;
+      font-size: 0.95rem;
+    }
+    .input-group select option { background: #171a26; color: white; }
 
     /* Custom Shortcut List */
     .shortcut-grid {
@@ -1098,12 +1135,13 @@
       border-radius: 0.5rem;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
+      transition: background 0.2s, transform 0.1s, filter 0.2s;
       font-size: 1rem;
     }
 
     .save-btn:hover {
-      background: #b8b0ff;
+      background: var(--accent-soft);
+      filter: brightness(1.2);
       transform: scale(1.02);
     }
     
@@ -1134,7 +1172,9 @@
       .mail-group .tile {
         flex-direction: column;
       }
-      body { overflow: auto; }
+      body { overflow: hidden; }
+      .container { height: 100dvh; overflow-y: auto; scrollbar-width: none; }
+      .container::-webkit-scrollbar { display: none; }
       
       #stealth-widget {
         top: 1rem;
@@ -1266,9 +1306,22 @@
           <div class="input-group">
             <label>City Name (e.g. London, New York, Tokyo)</label>
             <input type="text" id="set-city" placeholder="Enter your city...">
-            <small style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.2rem;">
-              We will automatically detect your coordinates to show the right weather.
+            <button type="button" class="cancel-btn" id="detectLocationBtn">◎ Detect my location</button>
+            <small id="location-status" style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.2rem;">
+              Location access is optional. You can also enter a city manually.
             </small>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <h3>Display</h3>
+          <div class="input-group">
+            <label for="temperature-unit">Temperature</label>
+            <select id="temperature-unit"><option value="celsius">Celsius (°C)</option><option value="fahrenheit">Fahrenheit (°F)</option></select>
+          </div>
+          <div class="input-group">
+            <label for="clock-format">Clock format</label>
+            <select id="clock-format"><option value="24">24-hour</option><option value="12">12-hour</option></select>
           </div>
         </div>
 
@@ -1293,7 +1346,7 @@
 
   <div class="container">
     <!-- WEATHER CARD -->
-    <div class="weather" id="weatherWidget" style="cursor: pointer;" title="Click to refresh weather">
+    <div class="weather" id="weatherWidget">
       <div class="weather-icon" id="weatherIcon">☀️</div>
       <div class="weather-info">
         <div class="temperature" id="temperature">--°C</div>
@@ -1515,6 +1568,7 @@
         lat: "-33.8688",
         lon: "151.2093"
       },
+      preferences: { temperatureUnit: "celsius", clockFormat: "24" },
       links: {
         gmail: { name: "Gmail", url: "https://mail.google.com/" },
         outlook: { name: "Outlook", url: "https://outlook.live.com/" },
@@ -1557,13 +1611,30 @@
     const SLASH_COMMANDS = [
       { cmd: 'yt', name: 'YouTube', url: 'https://www.youtube.com/results?search_query=', desc: 'Search YouTube' },
       { cmd: 'gh', name: 'GitHub', url: 'https://github.com/search?q=', desc: 'Search GitHub' },
+      { cmd: 'ai', name: 'Perplexity', url: 'https://www.perplexity.ai/search?q=', desc: 'Search with AI' },
       { cmd: 'ask', name: 'Perplexity', url: 'https://www.perplexity.ai/search?q=', desc: 'Ask Perplexity' },
       { cmd: 'gpt', name: 'ChatGPT', url: 'https://chatgpt.com/?q=', desc: 'Ask ChatGPT' },
       { cmd: 'claude', name: 'Claude', url: 'https://claude.ai/new?q=', desc: 'Ask Claude' },
+      { cmd: 'weather', name: 'Weather', action: 'weather', desc: 'Refresh weather' },
+      { cmd: 'calc', name: 'Calculator', action: 'calc', desc: 'Calculate an expression' },
+      { cmd: 'time', name: 'World clock', action: 'time', desc: 'Convert/check a timezone' },
+      { cmd: 'clear', name: 'Clear', action: 'clear', desc: 'Clear the search field' },
       { cmd: 'deepl', name: 'DeepL', url: 'https://www.deepl.com/translator#en/auto/', desc: 'Translate with DeepL' }
     ];
 
+    const QUICK_SHORTCUTS = {
+      youtube: 'https://youtube.com/', yt: 'https://youtube.com/',
+      github: 'https://github.com/', gh: 'https://github.com/',
+      google: 'https://google.com/', reddit: 'https://reddit.com/',
+      discord: 'https://discord.com/app', twitch: 'https://twitch.tv/',
+      soundcloud: 'https://soundcloud.com/', steam: 'https://store.steampowered.com/',
+      chatgpt: 'https://chatgpt.com/', claude: 'https://claude.ai/'
+    };
+
     let currentConfig = JSON.parse(localStorage.getItem('aesthetic_newtab_config')) || JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+    currentConfig.location ||= JSON.parse(JSON.stringify(DEFAULT_CONFIG.location));
+    currentConfig.links ||= JSON.parse(JSON.stringify(DEFAULT_CONFIG.links));
+    currentConfig.preferences ||= { temperatureUnit: "celsius", clockFormat: "24" };
 
     // ---------- THEME ENGINE ----------
     function applyTheme() {
@@ -1574,12 +1645,18 @@
       const root = document.documentElement;
 
       // Accent (only the purple highlights change)
+      root.style.setProperty('--theme-h', h);
+      root.style.setProperty('--theme-s', `${s}%`);
       root.style.setProperty('--accent-soft', `hsl(${h}, ${s}%, 75%)`);
       root.style.setProperty('--accent-glow', `hsla(${h}, ${s}%, 75%, 0.18)`);
+      root.style.setProperty('--accent-border', `hsla(${h}, ${s}%, 70%, 0.4)`);
+      root.style.setProperty('--theme-gradient', `linear-gradient(115deg, hsl(${h}, ${Math.min(s, 100)}%, 98%), hsl(${h + 12}, ${s}%, 84%), hsl(${h + 35}, ${s}%, 68%), hsl(${h + 65}, ${Math.min(s, 100)}%, 78%), hsl(${h}, ${Math.min(s, 100)}%, 98%))`);
+      root.style.setProperty('--theme-hover-bg', `hsla(${h}, ${s}%, 65%, 0.17)`);
+      root.style.setProperty('--theme-hover-border', `hsla(${h}, ${s}%, 78%, 0.62)`);
+      root.style.setProperty('--theme-hover-glow', `hsla(${h}, ${s}%, 70%, 0.24)`);
       root.style.setProperty('--orb-1', `hsl(${h - 20}, ${s}%, 35%)`);
       
       // Background and cards stay strictly dark (do not change hue)
-      // We only apply a very tiny contrast adjustment so the UI doesn't become unreadable.
       const bgLight = Math.max(2, Math.min(10, 4 + (c - 100) * 0.05));
       root.style.setProperty('--bg-deep', `hsl(250, 15%, ${bgLight}%)`);
       root.style.setProperty('--bg-glow-1', `hsl(250, 20%, ${bgLight + 6}%)`);
@@ -1593,6 +1670,9 @@
       localStorage.setItem('theme_s', s);
       localStorage.setItem('theme_c', c);
     }
+
+    // Remove legacy task data from earlier builds.
+    try { localStorage.removeItem('nu_tab_tasks'); } catch {}
 
     // ---------- INITIALIZATION ----------
     document.addEventListener('DOMContentLoaded', () => {
@@ -1623,6 +1703,9 @@
 
     function applyConfig() {
       document.getElementById('weather-location-text').textContent = currentConfig.location.city.toUpperCase();
+      currentConfig.preferences ||= { temperatureUnit: "celsius", clockFormat: "24" };
+      document.getElementById('temperature-unit').value = currentConfig.preferences.temperatureUnit || "celsius";
+      document.getElementById('clock-format').value = currentConfig.preferences.clockFormat || "24";
 
       for (const [key, data] of Object.entries(currentConfig.links)) {
         const linkEl = document.getElementById('link-' + key);
@@ -1638,6 +1721,8 @@
 
     function populateSettingsModal() {
       document.getElementById('set-city').value = currentConfig.location.city;
+      document.getElementById('temperature-unit').value = currentConfig.preferences?.temperatureUnit || "celsius";
+      document.getElementById('clock-format').value = currentConfig.preferences?.clockFormat || "24";
       const container = document.getElementById('shortcut-grid-container');
       
       const headers = container.querySelectorAll('.shortcut-grid-header');
@@ -1682,7 +1767,7 @@
         const div = document.createElement('div');
         div.className = 'slash-item';
         div.innerHTML = `<span class="cmd">/${cmd.cmd}</span> ${cmd.desc}`;
-        div.addEventListener('click', () => runSlashCommand(cmd.cmd, cmd.name, cmd.url));
+        div.addEventListener('click', () => runSlashCommand(cmd.cmd, cmd.name, cmd.url, cmd.action));
         menu.appendChild(div);
       });
     }
@@ -1690,8 +1775,9 @@
     // ---------- CLOCK ----------
     function updateClock() {
       const now = new Date();
+      const use12Hour = currentConfig.preferences?.clockFormat === "12";
       document.getElementById('clock').textContent = now.toLocaleTimeString([], {
-        hour: '2-digit', minute: '2-digit', hour12: false
+        hour: '2-digit', minute: '2-digit', hour12: use12Hour
       });
       document.getElementById('date').textContent = now.toLocaleDateString([], {
         weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
@@ -1699,34 +1785,33 @@
     }
 
     // ---------- WEATHER ----------
+    function displayTemperature(value) {
+      const unit = currentConfig.preferences?.temperatureUnit || "celsius";
+      const converted = unit === "fahrenheit" ? (value * 9 / 5) + 32 : value;
+      return `${Math.round(converted)}°${unit === "fahrenheit" ? "F" : "C"}`;
+    }
+
     async function updateWeather() {
       const { lat, lon } = currentConfig.location;
       const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&timezone=auto`;
-
       try {
         const response = await fetch(url);
         if (!response.ok) throw new Error('Weather request failed');
         const data = await response.json();
         const current = data.current;
-
-        const weatherMap = {
-          0: ['☀️', 'Clear sky'], 1: ['🌤️', 'Mainly clear'], 2: ['⛅', 'Partly cloudy'],
-          3: ['☁️', 'Overcast'], 45: ['🌫️', 'Foggy'], 48: ['🌫️', 'Rime fog'],
-          51: ['🌦️', 'Light drizzle'], 53: ['🌦️', 'Drizzle'], 55: ['🌧️', 'Heavy drizzle'],
-          61: ['🌧️', 'Light rain'], 63: ['🌧️', 'Rain'], 65: ['🌧️', 'Heavy rain'],
-          71: ['🌨️', 'Light snow'], 73: ['❄️', 'Snow'], 75: ['❄️', 'Heavy snow'],
-          80: ['🌦️', 'Rain showers'], 81: ['🌧️', 'Showers'], 82: ['⛈️', 'Heavy showers'],
-          95: ['⛈️', 'Thunderstorm'], 96: ['⛈️', 'Thunderstorm with hail'], 99: ['⛈️', 'Severe thunderstorm']
-        };
-
-        const [emoji, conditionText] = weatherMap[current.weather_code] || ['🌡️', 'Current conditions'];
-
+        const [emoji, conditionText] = ({
+          0:['☀️','Clear sky'],1:['🌤️','Mainly clear'],2:['⛅','Partly cloudy'],3:['☁️','Overcast'],
+          45:['🌫️','Foggy'],48:['🌫️','Rime fog'],51:['🌦️','Light drizzle'],53:['🌦️','Drizzle'],
+          55:['🌧️','Heavy drizzle'],61:['🌧️','Light rain'],63:['🌧️','Rain'],65:['🌧️','Heavy rain'],
+          71:['🌨️','Light snow'],73:['❄️','Snow'],75:['❄️','Heavy snow'],80:['🌦️','Rain showers'],
+          81:['🌧️','Showers'],82:['⛈️','Heavy showers'],95:['⛈️','Thunderstorm'],96:['⛈️','Thunderstorm with hail'],99:['⛈️','Severe thunderstorm']
+        })[current.weather_code] || ['🌡️','Current conditions'];
         document.getElementById('weatherIcon').textContent = emoji;
-        document.getElementById('temperature').textContent = Math.round(current.temperature_2m) + '°C';
+        document.getElementById('temperature').textContent = displayTemperature(current.temperature_2m);
         document.getElementById('conditions').textContent = conditionText;
-        document.getElementById('feels').textContent = Math.round(current.apparent_temperature) + '°C';
-        document.getElementById('wind').textContent = Math.round(current.wind_speed_10m) + ' km/h';
-        document.getElementById('humidity').textContent = current.relative_humidity_2m + '%';
+        document.getElementById('feels').textContent = displayTemperature(current.apparent_temperature);
+        document.getElementById('wind').textContent = `${Math.round(current.wind_speed_10m)} km/h`;
+        document.getElementById('humidity').textContent = `${current.relative_humidity_2m}%`;
       } catch (error) {
         document.getElementById('conditions').textContent = 'Weather unavailable';
       }
@@ -1765,6 +1850,31 @@
           e.preventDefault();
         }
       }
+    }
+
+    async function detectLocation() {
+      const status = document.getElementById('location-status');
+      if (!navigator.geolocation) { status.textContent = "Geolocation is not supported by this browser."; return; }
+      status.textContent = "Requesting location permission…";
+      navigator.geolocation.getCurrentPosition(async position => {
+        const { latitude, longitude } = position.coords;
+        status.textContent = "Location found. Resolving city…";
+        try {
+          const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`);
+          const data = await response.json();
+          const cityName = data.city || data.locality || data.principalSubdivision || "Detected location";
+          const city = [cityName, data.countryName].filter(Boolean).join(", ");
+          document.getElementById('set-city').value = city;
+          currentConfig.location = { city, lat: latitude, lon: longitude };
+          status.textContent = `Detected: ${city}. Save settings to apply.`;
+        } catch (error) {
+          document.getElementById('set-city').value = "Detected location";
+          currentConfig.location = { city: "Detected location", lat: latitude, lon: longitude };
+          status.textContent = "Coordinates detected. Save settings to apply.";
+        }
+      }, error => {
+        status.textContent = error.code === 1 ? "Location permission was denied. Enter a city manually." : "Could not detect location. Enter a city manually.";
+      }, { enableHighAccuracy: false, timeout: 12000, maximumAge: 300000 });
     }
 
     async function saveSettings() {
@@ -1831,7 +1941,20 @@
 
     function handleInput(val) {
       const slashMenu = document.getElementById('slashMenu');
-      if (val.startsWith('/')) {
+      if (val.startsWith('@')) {
+        const prefix = val.slice(1).toLowerCase();
+        const matches = Object.entries(QUICK_SHORTCUTS).filter(([key]) => key.startsWith(prefix));
+        slashMenu.innerHTML = "";
+        matches.forEach(([key, url]) => {
+          const item = document.createElement('div');
+          item.className = 'slash-item';
+          item.innerHTML = `<span class="cmd">@${key}</span> Open ${key}`;
+          item.addEventListener('click', () => { window.open(url, '_blank', 'noopener'); document.getElementById('searchInput').value = ''; slashMenu.classList.remove('active'); });
+          slashMenu.appendChild(item);
+        });
+        slashMenu.classList.toggle('active', matches.length > 0);
+        slashIndex = -1;
+      } else if (val.startsWith('/') || val.startsWith('>')) {
         slashMenu.classList.add('active');
         slashIndex = -1;
         document.querySelectorAll('.slash-item').forEach(el => el.classList.remove('selected'));
@@ -1840,11 +1963,18 @@
       }
     }
 
-    function runSlashCommand(cmd, engineName, url) {
+    function runSlashCommand(cmd, engineName, url, action) {
       const searchInput = document.getElementById('searchInput');
       document.getElementById('slashMenu').classList.remove('active');
       searchInput.value = '';
-      
+      if (action === 'clear' || cmd === 'clear') { searchInput.focus(); return; }
+      if (action === 'weather' || cmd === 'weather') { updateWeather(); return; }
+      if (action === 'calc' || cmd === 'calc') {
+        searchInput.dataset.mode = 'calc'; searchInput.placeholder = 'Enter a calculation, e.g. 12*(4+3)…'; searchInput.focus(); return;
+      }
+      if (action === 'time' || cmd === 'time') {
+        searchInput.dataset.mode = 'time'; searchInput.placeholder = 'Enter a timezone, e.g. Tokyo…'; searchInput.focus(); return;
+      }
       if (cmd === 'black') {
         enterBlackout();
         return;
@@ -1857,10 +1987,40 @@
     }
 
     function triggerSearch() {
-      const query = document.getElementById('searchInput').value.trim();
-      if (query) {
-        window.location.href = activeSearchUrl + encodeURIComponent(query);
+      const input = document.getElementById('searchInput');
+      const raw = input.value.trim();
+      if (!raw) return;
+      if (input.dataset.mode === 'calc') {
+        try {
+          if (!/^[0-9+\-*/().%\s]+$/.test(raw)) throw new Error("Invalid expression");
+          const result = Function(`"use strict"; return (${raw})`)();
+          if (!Number.isFinite(result)) throw new Error("Invalid result");
+          input.value = String(result); input.dataset.mode = ""; input.placeholder = "Search the web…";
+        } catch { input.value = "Invalid calculation"; }
+        return;
       }
+      if (input.dataset.mode === 'time') {
+        const zone = raw.toLowerCase().includes('tokyo') ? 'Asia/Tokyo' : raw.toLowerCase().includes('london') ? 'Europe/London' : raw.toLowerCase().includes('new york') ? 'America/New_York' : raw.toLowerCase().includes('sydney') ? 'Australia/Sydney' : raw;
+        try { input.value = new Intl.DateTimeFormat([], { timeZone: zone, dateStyle: 'medium', timeStyle: 'long' }).format(new Date()); }
+        catch { input.value = "Unknown timezone. Try Tokyo, Sydney, London or New York."; }
+        input.dataset.mode = ""; input.placeholder = "Search the web…"; return;
+      }
+      if (raw.startsWith('>')) {
+        const command = raw.slice(1).trim().toLowerCase();
+        if (command === 'clear') { input.value = ''; return; }
+        if (command === 'weather') { updateWeather(); return; }
+        if (command === 'calc') { input.value = ''; input.dataset.mode = 'calc'; input.placeholder = 'Enter a calculation…'; return; }
+        if (command === 'time') { input.value = ''; input.dataset.mode = 'time'; input.placeholder = 'Enter a timezone…'; return; }
+        if (command === 'blackout') { enterBlackout(); return; }
+        if (command === 'help') { input.value = '/yt  /gh  /ai  /weather  /calc  /time  /clear'; return; }
+        const shortcutCommand = SLASH_COMMANDS.find(item => item.cmd === command);
+        if (shortcutCommand) { runSlashCommand(shortcutCommand.cmd, shortcutCommand.name, shortcutCommand.url, shortcutCommand.action); return; }
+      }
+      if (raw.startsWith('@')) {
+        const target = QUICK_SHORTCUTS[raw.slice(1).toLowerCase()];
+        if (target) { window.open(target, '_blank', 'noopener'); input.value = ''; return; }
+      }
+      window.location.href = activeSearchUrl + encodeURIComponent(raw);
     }
 
     function handleSearchKeydown(e) {
@@ -2039,6 +2199,7 @@
       document.getElementById('closeSettingsBtn').addEventListener('click', closeSettings);
       document.getElementById('cancelSettingsBtn').addEventListener('click', closeSettings);
       document.getElementById('saveSettingsBtn').addEventListener('click', saveSettings);
+      document.getElementById('detectLocationBtn').addEventListener('click', detectLocation);
       
       // Theme Controls
       document.getElementById('theme-btn').addEventListener('click', (e) => {
@@ -2095,9 +2256,6 @@
         }
         if (e.key === 'Escape' && isBlackout) exitBlackout();
       });
-
-      // Weather Refresh
-      document.getElementById('weatherWidget').addEventListener('click', updateWeather);
 
       // Stealth Widget
       document.getElementById('widgetHeader').addEventListener('click', toggleWidget);
