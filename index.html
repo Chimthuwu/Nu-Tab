@@ -44,6 +44,8 @@
 
     :root {
       --bg-deep: #0a0b10;
+      --bg-glow-1: #2b2a4a;
+      --bg-glow-2: #0f1e2b;
       --card-bg: rgba(18, 21, 33, 0.75);
       --card-border: rgba(255, 255, 255, 0.06);
       --text-primary: #f0f2fa;
@@ -54,13 +56,15 @@
       --transition-smooth: 0.25s cubic-bezier(0.2, 0.9, 0.3, 1);
       --lime-green: #a3e635;
       --lime-glow: rgba(163, 230, 53, 0.3);
+      --orb-1: #6b5aff;
+      --track-bg-sat: linear-gradient(to right, #444, #a99cff);
     }
 
     body {
       height: 100dvh;
       background:
-        radial-gradient(ellipse at 50% -10%, #2b2a4a 0%, transparent 60%),
-        radial-gradient(ellipse at 100% 100%, #0f1e2b 0%, transparent 50%),
+        radial-gradient(ellipse at 50% -10%, var(--bg-glow-1) 0%, transparent 60%),
+        radial-gradient(ellipse at 100% 100%, var(--bg-glow-2) 0%, transparent 50%),
         var(--bg-deep);
       color: var(--text-primary);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -78,7 +82,7 @@
       background: #000000 !important;
     }
 
-    body.blackout-mode .container, body.blackout-mode #stealth-widget, body.blackout-mode #settings-btn {
+    body.blackout-mode .container, body.blackout-mode #stealth-widget, body.blackout-mode .top-controls {
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.3s;
@@ -99,7 +103,7 @@
       width: 600px;
       height: 600px;
       border-radius: 50%;
-      background: #6b5aff;
+      background: var(--orb-1);
       filter: blur(190px);
       opacity: 0.1;
       top: -350px;
@@ -284,6 +288,8 @@
       max-width: 80vmin;
       margin: 0 auto;
       animation: fadeUp 0.9s 0.2s ease both;
+      position: relative; /* FIXED FOR DROPDOWN */
+      z-index: 20;        /* FIXED FOR DROPDOWN */
     }
 
     .search-wrapper {
@@ -488,6 +494,8 @@
       animation: fadeUp 1s 0.3s ease both;
       text-align: left;
       flex-shrink: 0;
+      position: relative; /* FIXED FOR DROPDOWN */
+      z-index: 10;        /* FIXED FOR DROPDOWN */
     }
 
     .dashboard-row {
@@ -539,12 +547,12 @@
       gap: 1.5vmin;
     }
     .mail-group .icon {
-      width: 3.5vmin;
-      height: 3.5vmin;
+      width: 4vmin;  /* BIGGER MAIL ICONS */
+      height: 4vmin; /* BIGGER MAIL ICONS */
     }
-    .mail-group .icon img {
-      width: 2vmin;
-      height: 2vmin;
+    .mail-group .icon img, .mail-group .icon svg { /* BIGGER MAIL ICONS */
+      width: 2.5vmin;
+      height: 2.5vmin;
     }
     .mail-group .tile span {
       font-size: clamp(0.7rem, 1.4vmin, 0.9rem);
@@ -589,16 +597,16 @@
     }
 
     .icon {
-      width: 4.5vmin;
-      height: 4.5vmin;
-      border-radius: 1.2vmin;
+      width: 5.5vmin;   /* BIGGER ICONS */
+      height: 5.5vmin;  /* BIGGER ICONS */
+      border-radius: 1.5vmin; /* Adjusted radius slightly for bigger box */
       display: flex;
       align-items: center;
       justify-content: center;
       background: rgba(32, 36, 56, 0.7);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
       transition: background 0.2s, transform 0.3s ease;
-      font-size: 2.2vmin;
+      font-size: 2.5vmin; /* BIGGER FONT */
     }
 
     .tile:hover .icon {
@@ -606,9 +614,15 @@
       transform: scale(1.08);
     }
 
+    .icon svg { /* ADDED THIS SO SVGS SCALE UP */
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
     .icon img {
-      width: 2.5vmin;
-      height: 2.5vmin;
+      width: 3.5vmin;  /* BIGGER IMAGES */
+      height: 3.5vmin; /* BIGGER IMAGES */
       object-fit: contain;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
     }
@@ -792,11 +806,18 @@
       flex: 0 0 auto;
     }
 
-    /* ----- SETTINGS GEAR & MODAL (Redesigned) ----- */
-    #settings-btn {
+    /* ----- TOP CONTROLS & THEME SETTINGS ----- */
+    .top-controls {
       position: fixed;
       top: 2vmin;
       right: 2vmin;
+      display: flex;
+      align-items: flex-start;
+      gap: 1.5vmin;
+      z-index: 100;
+    }
+
+    #settings-btn, #theme-btn {
       background: rgba(18, 21, 33, 0.95);
       border: 1px solid var(--card-border);
       border-radius: 50%;
@@ -809,16 +830,103 @@
       color: var(--text-muted);
       font-size: 2.2vmin;
       transition: all 0.3s;
-      z-index: 100;
       backdrop-filter: var(--glass-blur);
       -webkit-backdrop-filter: var(--glass-blur);
       box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+      flex-shrink: 0;
+    }
+
+    #settings-btn:hover, #theme-btn:hover {
+      color: var(--text-primary);
+      border-color: var(--accent-soft);
     }
 
     #settings-btn:hover {
-      color: var(--text-primary);
-      border-color: var(--accent-soft);
       transform: rotate(90deg);
+    }
+
+    #theme-btn {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.9);
+    }
+
+    .top-controls:hover #theme-btn,
+    #theme-btn:focus-visible,
+    #theme-btn.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+
+    #theme-controls {
+      display: none;
+      position: absolute;
+      top: calc(100% + 1.5vmin);
+      right: 0;
+      background: rgba(18, 21, 33, 0.98);
+      border: 1px solid var(--card-border);
+      border-radius: 1.5vmin;
+      padding: 1.5vmin;
+      width: 25vmin;
+      flex-direction: column;
+      gap: 1.5vmin;
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.8);
+    }
+
+    #theme-controls.active {
+      display: flex;
+    }
+
+    .slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8vmin;
+    }
+
+    .slider-row label {
+      font-size: clamp(0.6rem, 1.2vmin, 0.8rem);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 600;
+    }
+
+    /* Custom Range Slider */
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      background: transparent;
+      cursor: pointer;
+      margin: 0.5vmin 0;
+    }
+    input[type=range]:focus {
+      outline: none;
+    }
+    input[type=range]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 0.6vmin;
+      border-radius: 0.3vmin;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 2vmin;
+      width: 2vmin;
+      border-radius: 50%;
+      background: #fff;
+      margin-top: -0.7vmin;
+      box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    }
+    
+    #hue-slider::-webkit-slider-runnable-track {
+      background: linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red);
+    }
+    #sat-slider::-webkit-slider-runnable-track {
+      background: var(--track-bg-sat, linear-gradient(to right, #444, #a99cff));
+    }
+    #contrast-slider::-webkit-slider-runnable-track {
+      background: linear-gradient(to right, #000, #555, #fff);
     }
 
     .modal-overlay {
@@ -1009,21 +1117,21 @@
       }
       body { overflow: auto; }
       
-      #stealth-widget, #settings-btn {
+      #stealth-widget {
         top: 1rem;
         left: 1rem;
         right: auto;
         max-width: none;
       }
-      #settings-btn {
-        left: auto;
+      .top-controls {
+        top: 1rem;
         right: 1rem;
       }
     }
 
     .icon img.custom-brand-icon {
-      width: 2.5vmin;
-      height: 2.5vmin;
+      width: 3.5vmin;  /* BIGGER CUSTOM ICON */
+      height: 3.5vmin; /* BIGGER CUSTOM ICON */
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
@@ -1036,12 +1144,12 @@
       display: block !important;
       visibility: visible;
       opacity: 1;
-      width: 2.5vmin !important;
-      height: 2.5vmin !important;
-      min-width: 2.5vmin;
-      min-height: 2.5vmin;
+      width: 3.5vmin !important;  /* BIGGER CUSTOM ICON */
+      height: 3.5vmin !important; /* BIGGER CUSTOM ICON */
+      min-width: 3.5vmin;
+      min-height: 3.5vmin;
       object-fit: contain;
-      flex: 0 0 2.5vmin;
+      flex: 0 0 3.5vmin;
       border-radius: 0.5vmin;
       filter: none !important;
     }
@@ -1054,10 +1162,28 @@
     <div class="hint">double-click anywhere to exit</div>
   </div>
 
-  <!-- SETTINGS GEAR -->
-  <button id="settings-btn" onclick="openSettings()" title="Settings">
-    ⚙️
-  </button>
+  <!-- TOP CONTROLS & SETTINGS -->
+  <div class="top-controls">
+    <button id="theme-btn" title="Theme Colors">🎨</button>
+    <button id="settings-btn" onclick="openSettings()" title="Settings">
+      ⚙️
+    </button>
+    
+    <div id="theme-controls">
+      <div class="slider-row">
+        <label>Hue</label>
+        <input type="range" id="hue-slider" min="0" max="360" value="250">
+      </div>
+      <div class="slider-row">
+        <label>Saturation</label>
+        <input type="range" id="sat-slider" min="0" max="100" value="100">
+      </div>
+      <div class="slider-row">
+        <label>Contrast</label>
+        <input type="range" id="contrast-slider" min="50" max="150" value="100">
+      </div>
+    </div>
+  </div>
 
   <!-- STEALTH WIDGET -->
   <div id="stealth-widget">
@@ -1336,12 +1462,20 @@
               <div class="icon"><svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="Steam" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="21" fill="#fff"/><circle cx="31" cy="17" r="8" fill="#171D25"/><circle cx="31" cy="17" r="4.5" fill="#fff"/><path d="m7 27 13 6 5-7" fill="none" stroke="#171D25" stroke-width="5" stroke-linecap="round"/><circle cx="17" cy="34" r="6" fill="#171D25"/><circle cx="17" cy="34" r="3" fill="#fff"/></svg></div>
               <span id="text-steam">Steam</span>
             </a>
+            
+            <!-- UPDATED RAILSCOPE ICON -->
             <a class="tile" id="link-railscope" href="https://railscope.pages.dev/" target="_blank" rel="noopener">
-              <div class="icon" style="font-size: 2vmin; color: #60a5fa;">🚆</div>
+              <div class="icon">
+                <img class="custom-brand-icon" src="https://i.ibb.co/9HsKYg8T/CITYRAIL.png" alt="Railscope">
+              </div>
               <span id="text-railscope">Railscope</span>
             </a>
+            
+            <!-- UPDATED PSYDECHAT ICON -->
             <a class="tile" id="link-psydechat" href="https://psyde-chat.pages.dev/" target="_blank" rel="noopener">
-              <div class="icon" style="font-size: 2vmin; color: #a78bfa;">🧠</div>
+              <div class="icon">
+                <img class="custom-brand-icon" src="https://i.ibb.co/GfjHQ5sf/icon.png" alt="Psydechat">
+              </div>
               <span id="text-psydechat">Psydechat</span>
             </a>
           </div>
@@ -1381,7 +1515,7 @@
               <span id="text-nous">Nous Portal</span>
             </a>
             <a class="tile" id="link-htmlviewer" href="https://html.onlineviewer.net/" target="_blank" rel="noopener">
-              <div class="icon" style="font-family: monospace; color: var(--accent-soft); font-weight: bold; font-size: 1.8vmin; letter-spacing: -1px;">
+              <div class="icon" style="font-family: monospace; color: var(--accent-soft); font-weight: bold; font-size: 2.2vmin; letter-spacing: -1px;">
                 &lt;/&gt;
               </div>
               <span id="text-htmlviewer">HTML Viewer</span>
@@ -1477,6 +1611,70 @@
     };
 
     let currentConfig = JSON.parse(localStorage.getItem('aesthetic_newtab_config')) || JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+
+    // ---------- THEME ENGINE ----------
+    function applyTheme() {
+      const h = parseInt(document.getElementById('hue-slider').value);
+      const s = parseInt(document.getElementById('sat-slider').value);
+      const c = parseInt(document.getElementById('contrast-slider').value);
+
+      const root = document.documentElement;
+
+      // Accent
+      root.style.setProperty('--accent-soft', `hsl(${h}, ${s}%, 75%)`);
+      root.style.setProperty('--accent-glow', `hsla(${h}, ${s}%, 75%, 0.18)`);
+
+      // Background (kept dark to prevent muddy colors)
+      const bgLight = Math.max(2, Math.min(10, 4 + (c - 100) * 0.05));
+      root.style.setProperty('--bg-deep', `hsl(${h}, 20%, ${bgLight}%)`);
+      
+      // Glows
+      root.style.setProperty('--bg-glow-1', `hsl(${h}, 30%, ${bgLight + 6}%)`);
+      root.style.setProperty('--bg-glow-2', `hsl(${h}, 20%, ${bgLight + 3}%)`);
+
+      // Orb
+      root.style.setProperty('--orb-1', `hsl(${h - 20}, ${s}%, 35%)`);
+
+      // Cards
+      root.style.setProperty('--card-bg', `hsla(${h}, 15%, 8%, 0.85)`);
+      root.style.setProperty('--card-border', `hsla(${h}, 20%, 100%, 0.06)`);
+
+      // Update slider track
+      document.getElementById('sat-slider').style.setProperty('--track-bg-sat', `linear-gradient(to right, #444, hsl(${h}, 100%, 70%))`);
+
+      // Save to localStorage
+      localStorage.setItem('theme_h', h);
+      localStorage.setItem('theme_s', s);
+      localStorage.setItem('theme_c', c);
+    }
+
+    // Load Theme
+    const savedH = localStorage.getItem('theme_h') || 250;
+    const savedS = localStorage.getItem('theme_s') || 100;
+    const savedC = localStorage.getItem('theme_c') || 100;
+
+    document.getElementById('hue-slider').value = savedH;
+    document.getElementById('sat-slider').value = savedS;
+    document.getElementById('contrast-slider').value = savedC;
+    applyTheme();
+
+    // Theme Controls toggling
+    document.getElementById('theme-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      document.getElementById('theme-controls').classList.toggle('active');
+      document.getElementById('theme-btn').classList.toggle('active');
+    });
+
+    document.getElementById('hue-slider').addEventListener('input', applyTheme);
+    document.getElementById('sat-slider').addEventListener('input', applyTheme);
+    document.getElementById('contrast-slider').addEventListener('input', applyTheme);
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.top-controls')) {
+        document.getElementById('theme-controls').classList.remove('active');
+        document.getElementById('theme-btn').classList.remove('active');
+      }
+    });
 
     // ---------- APPLY CONFIG TO UI ----------
     function applyConfig() {
