@@ -313,6 +313,161 @@
       text-align: right;
     }
 
+    /* ----- FIVE-DAY WEATHER HOVER FORECAST ----- */
+    .weather {
+      z-index: 30;
+      overflow: visible;
+    }
+
+    .weather-forecast {
+      position: absolute;
+      top: calc(100% + 12px);
+      left: 50%;
+      width: min(680px, calc(100vw - 32px));
+      padding: 1.1rem 1.2rem 0.8rem;
+      border: 1px solid var(--theme-hover-border);
+      border-radius: 18px;
+      background: rgba(15, 18, 30, 0.96);
+      -webkit-backdrop-filter: blur(22px);
+      backdrop-filter: blur(22px);
+      box-shadow: 0 22px 55px rgba(0, 0, 0, 0.58), 0 0 28px var(--theme-hover-glow), inset 0 1px rgba(255,255,255,0.06);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translate(-50%, 10px) scale(0.98);
+      transform-origin: top center;
+      transition: opacity 180ms ease, transform 220ms cubic-bezier(0.2, 0.9, 0.3, 1), visibility 180ms;
+      z-index: 80;
+      cursor: default;
+      text-align: left;
+    }
+
+    .weather:hover .weather-forecast,
+    .weather:focus-within .weather-forecast,
+    .weather.forecast-open .weather-forecast {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translate(-50%, 0) scale(1);
+    }
+
+    .forecast-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.9rem;
+      color: var(--accent-soft);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+    }
+
+    .forecast-updated {
+      color: var(--text-muted);
+      font-size: 0.58rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+    }
+
+    .forecast-days {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0.55rem;
+    }
+
+    .forecast-day {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.48rem;
+      padding: 0.8rem 0.35rem;
+      border: 1px solid rgba(255,255,255,0.055);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.035);
+    }
+
+    .forecast-day:first-child {
+      background: var(--theme-hover-bg);
+      border-color: var(--theme-hover-border);
+    }
+
+    .forecast-name {
+      color: var(--text-muted);
+      font-size: 0.68rem;
+      font-weight: 650;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .forecast-icon {
+      font-size: 1.65rem;
+      line-height: 1.2;
+      filter: drop-shadow(0 3px 7px rgba(0,0,0,0.35));
+    }
+
+    .forecast-condition {
+      min-height: 2em;
+      color: var(--text-muted);
+      font-size: 0.62rem;
+      line-height: 1.25;
+      text-align: center;
+    }
+
+    .forecast-temperatures {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      white-space: nowrap;
+      font-size: 0.78rem;
+      font-weight: 650;
+    }
+
+    .forecast-high { color: var(--text-primary); }
+    .forecast-low { color: var(--text-muted); }
+
+    .forecast-rain {
+      color: #8bd8ff;
+      font-size: 0.65rem;
+      white-space: nowrap;
+    }
+
+    .forecast-hint {
+      margin-top: 0.8rem;
+      color: #69718a;
+      font-size: 0.58rem;
+      letter-spacing: 0.04em;
+      text-align: center;
+    }
+
+    .forecast-loading,
+    .forecast-error {
+      grid-column: 1 / -1;
+      padding: 1.2rem 0.5rem;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      text-align: center;
+    }
+
+    @media (max-width: 560px) {
+      .weather-forecast {
+        width: min(520px, calc(100vw - 20px));
+        padding: 0.8rem 0.65rem 0.65rem;
+      }
+      .forecast-days { gap: 0.3rem; }
+      .forecast-day { padding: 0.65rem 0.15rem; gap: 0.4rem; }
+      .forecast-name { font-size: 0.58rem; }
+      .forecast-icon { font-size: 1.3rem; }
+      .forecast-condition { font-size: 0.54rem; }
+      .forecast-temperatures { gap: 0.25rem; font-size: 0.66rem; }
+      .forecast-rain { font-size: 0.56rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .weather-forecast { transition: none; }
+    }
+
     /* ----- ADVANCED SEARCH BAR & DROPDOWN ----- */
     .search-row {
       display: flex;
@@ -1346,7 +1501,7 @@
 
   <div class="container">
     <!-- WEATHER CARD -->
-    <div class="weather" id="weatherWidget">
+    <div class="weather" id="weatherWidget" tabindex="0" role="button" aria-label="Current weather. Hover or activate to view the five-day forecast." aria-expanded="false">
       <div class="weather-icon" id="weatherIcon">☀️</div>
       <div class="weather-info">
         <div class="temperature" id="temperature">--°C</div>
@@ -1362,6 +1517,16 @@
       <div class="weather-clock">
         <div class="clock" id="clock">--:--</div>
         <div class="date" id="date">LOCAL TIME</div>
+      </div>
+      <div class="weather-forecast" id="weatherForecast" aria-label="Five day weather forecast">
+        <div class="forecast-heading">
+          <span>5-DAY FORECAST</span>
+          <span class="forecast-updated" id="forecastUpdated">LOCAL OUTLOOK</span>
+        </div>
+        <div class="forecast-days" id="forecastDays">
+          <div class="forecast-loading">Loading forecast…</div>
+        </div>
+        <div class="forecast-hint">Hover to view · Click to pin</div>
       </div>
     </div>
 
@@ -1803,38 +1968,131 @@
       }).toUpperCase();
     }
 
-    // ---------- WEATHER ----------
+    // ---------- WEATHER + FIVE-DAY FORECAST ----------
+    const WEATHER_CODES = {
+      0:['☀️','Clear sky'], 1:['🌤️','Mainly clear'], 2:['⛅','Partly cloudy'], 3:['☁️','Overcast'],
+      45:['🌫️','Foggy'], 48:['🌫️','Rime fog'],
+      51:['🌦️','Light drizzle'], 53:['🌦️','Drizzle'], 55:['🌧️','Heavy drizzle'],
+      56:['🌧️','Freezing drizzle'], 57:['🌧️','Freezing drizzle'],
+      61:['🌦️','Light rain'], 63:['🌧️','Rain'], 65:['🌧️','Heavy rain'],
+      66:['🌧️','Freezing rain'], 67:['🌧️','Heavy freezing rain'],
+      71:['🌨️','Light snow'], 73:['❄️','Snow'], 75:['❄️','Heavy snow'], 77:['🌨️','Snow grains'],
+      80:['🌦️','Rain showers'], 81:['🌧️','Showers'], 82:['⛈️','Heavy showers'],
+      85:['🌨️','Snow showers'], 86:['❄️','Heavy snow showers'],
+      95:['⛈️','Thunderstorm'], 96:['⛈️','Thunderstorm with hail'], 99:['⛈️','Severe thunderstorm']
+    };
+
     function displayTemperature(value) {
       const unit = currentConfig.preferences?.temperatureUnit || "celsius";
       const converted = unit === "fahrenheit" ? (value * 9 / 5) + 32 : value;
       return `${Math.round(converted)}°${unit === "fahrenheit" ? "F" : "C"}`;
     }
 
+    function renderFiveDayForecast(daily) {
+      const daysContainer = document.getElementById('forecastDays');
+      const updatedLabel = document.getElementById('forecastUpdated');
+      if (!daily || !Array.isArray(daily.time) || !daily.time.length) {
+        daysContainer.innerHTML = '<div class="forecast-error">Forecast data is currently unavailable.</div>';
+        return;
+      }
+
+      const dayFormatter = new Intl.DateTimeFormat(undefined, { weekday: 'short' });
+      daysContainer.replaceChildren();
+
+      daily.time.slice(0, 5).forEach((dateString, index) => {
+        // Parse as a local calendar date to avoid UTC date shifts.
+        const [year, month, day] = dateString.split('-').map(Number);
+        const date = new Date(year, month - 1, day);
+        const isToday = index === 0;
+        const code = daily.weather_code?.[index];
+        const [icon, condition] = WEATHER_CODES[code] || ['🌡️', 'Conditions'];
+        const high = daily.temperature_2m_max?.[index];
+        const low = daily.temperature_2m_min?.[index];
+        const rain = daily.precipitation_probability_max?.[index];
+
+        const card = document.createElement('div');
+        card.className = 'forecast-day';
+
+        const name = document.createElement('div');
+        name.className = 'forecast-name';
+        name.textContent = isToday ? 'Today' : dayFormatter.format(date);
+
+        const weatherIcon = document.createElement('div');
+        weatherIcon.className = 'forecast-icon';
+        weatherIcon.textContent = icon;
+        weatherIcon.setAttribute('aria-hidden', 'true');
+
+        const description = document.createElement('div');
+        description.className = 'forecast-condition';
+        description.textContent = condition;
+
+        const temperatures = document.createElement('div');
+        temperatures.className = 'forecast-temperatures';
+        const highEl = document.createElement('span');
+        highEl.className = 'forecast-high';
+        highEl.textContent = Number.isFinite(high) ? displayTemperature(high) : '--°';
+        const lowEl = document.createElement('span');
+        lowEl.className = 'forecast-low';
+        lowEl.textContent = Number.isFinite(low) ? displayTemperature(low) : '--°';
+        temperatures.append(highEl, lowEl);
+
+        const rainEl = document.createElement('div');
+        rainEl.className = 'forecast-rain';
+        rainEl.textContent = Number.isFinite(rain) ? `💧 ${rain}%` : 'Rain —';
+
+        card.append(name, weatherIcon, description, temperatures, rainEl);
+        daysContainer.appendChild(card);
+      });
+
+      updatedLabel.textContent = 'NEXT 5 DAYS';
+    }
+
     async function updateWeather() {
       const { lat, lon } = currentConfig.location;
-      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&timezone=auto`;
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&forecast_days=5&timezone=auto`;
       try {
         const response = await fetch(url);
         if (!response.ok) throw new Error('Weather request failed');
         const data = await response.json();
         const current = data.current;
-        const [emoji, conditionText] = ({
-          0:['☀️','Clear sky'],1:['🌤️','Mainly clear'],2:['⛅','Partly cloudy'],3:['☁️','Overcast'],
-          45:['🌫️','Foggy'],48:['🌫️','Rime fog'],51:['🌦️','Light drizzle'],53:['🌦️','Drizzle'],
-          55:['🌧️','Heavy drizzle'],61:['🌧️','Light rain'],63:['🌧️','Rain'],65:['🌧️','Heavy rain'],
-          71:['🌨️','Light snow'],73:['❄️','Snow'],75:['❄️','Heavy snow'],80:['🌦️','Rain showers'],
-          81:['🌧️','Showers'],82:['⛈️','Heavy showers'],95:['⛈️','Thunderstorm'],96:['⛈️','Thunderstorm with hail'],99:['⛈️','Severe thunderstorm']
-        })[current.weather_code] || ['🌡️','Current conditions'];
+        const [emoji, conditionText] = WEATHER_CODES[current.weather_code] || ['🌡️','Current conditions'];
         document.getElementById('weatherIcon').textContent = emoji;
         document.getElementById('temperature').textContent = displayTemperature(current.temperature_2m);
         document.getElementById('conditions').textContent = conditionText;
         document.getElementById('feels').textContent = displayTemperature(current.apparent_temperature);
         document.getElementById('wind').textContent = `${Math.round(current.wind_speed_10m)} km/h`;
         document.getElementById('humidity').textContent = `${current.relative_humidity_2m}%`;
+        renderFiveDayForecast(data.daily);
       } catch (error) {
         document.getElementById('conditions').textContent = 'Weather unavailable';
+        document.getElementById('forecastDays').innerHTML = '<div class="forecast-error">Could not load the forecast. Check your connection and try again.</div>';
       }
     }
+
+    // Hover works on desktop; click/tap pins the panel on touch devices.
+    const weatherWidget = document.getElementById('weatherWidget');
+    weatherWidget.addEventListener('click', (event) => {
+      if (event.target.closest('.weather-forecast')) return;
+      const isOpen = weatherWidget.classList.toggle('forecast-open');
+      weatherWidget.setAttribute('aria-expanded', String(isOpen));
+    });
+    weatherWidget.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        weatherWidget.classList.remove('forecast-open');
+        weatherWidget.setAttribute('aria-expanded', 'false');
+      }
+      if ((event.key === 'Enter' || event.key === ' ') && event.target === weatherWidget) {
+        event.preventDefault();
+        weatherWidget.click();
+      }
+    });
+    document.addEventListener('click', (event) => {
+      if (!weatherWidget.contains(event.target)) {
+        weatherWidget.classList.remove('forecast-open');
+        weatherWidget.setAttribute('aria-expanded', 'false');
+      }
+    });
+
     setInterval(updateWeather, 15 * 60 * 1000);
 
     // ---------- SETTINGS ----------
@@ -2302,4 +2560,3 @@
   </script>
 </body>
 </html>
-
