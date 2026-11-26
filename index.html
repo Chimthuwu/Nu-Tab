@@ -1395,7 +1395,6 @@
     <symbol id="icon-cloudflare" viewBox="0 0 48 48"><path fill="#F38020" d="M10 34h27a7 7 0 0 0 0-14h-1a13 13 0 0 0-25-2 8 8 0 0 0-1 16z"/><path fill="#FAAE40" d="M8 37h29a5 5 0 0 0 0-10H13a5 5 0 0 0-5 10z"/></symbol>
     <symbol id="icon-render" viewBox="0 0 48 48"><path fill="#fff" d="M8 7h22a11 11 0 0 1 0 22H20v12H8zm12 10v4h10a2 2 0 0 0 0-4z"/></symbol>
     <symbol id="icon-openrouter" viewBox="0 0 48 48"><path fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M9 12h17a8 8 0 0 1 8 8v1m-7-6 7 6 7-6M9 36h13a8 8 0 0 0 8-8v-1"/></symbol>
-    <symbol id="icon-vercel" viewBox="0 0 48 48"><path fill="#fff" d="M24 5 46 43H2z"/></symbol>
     <symbol id="icon-supabase" viewBox="0 0 48 48"><path fill="#3ECF8E" d="M26 5 8 27h14l-2 16 20-25H26z"/></symbol>
     <symbol id="icon-chatgpt" viewBox="0 0 48 48"><g fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 7a9 9 0 0 1 8 5l5 3a9 9 0 0 1 1 9l-1 6a9 9 0 0 1-8 5h-6l-5 3a9 9 0 0 1-8-5l-5-3a9 9 0 0 1-1-9l1-6a9 9 0 0 1 8-5h6z"/><path d="m17 13 14 22M10 19l28 10M10 30l21-17"/></g></symbol>
     <symbol id="icon-claude" viewBox="0 0 48 48"><g fill="none" stroke="#D97757" stroke-width="3" stroke-linecap="round"><path d="M24 4v40M4 24h40M10 10l28 28M38 10 10 38"/><path d="m24 4 3 8-3-2-3 2zM44 24l-8 3 2-3-2-3zM24 44l-3-8 3 2 3-2zM4 24l8-3-2 3 2 3z" fill="#D97757"/></g></symbol>
@@ -1652,9 +1651,11 @@
               <div class="icon"><svg><use href="#icon-openrouter"></use></svg></div>
               <span id="text-openrouter">OpenRouter</span>
             </a>
-            <a class="tile" id="link-vercel" href="https://vercel.com/" target="_blank" rel="noopener">
-              <div class="icon"><svg><use href="#icon-vercel"></use></svg></div>
-              <span id="text-vercel">Vercel</span>
+            <a class="tile" id="link-opencode" href="https://opencode.ai/console" target="_blank" rel="noopener">
+              <div class="icon">
+                <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="3" y="3" width="42" height="42" rx="11" fill="#a3e635"/><text x="24" y="33" text-anchor="middle" font-family="Outfit, Arial, sans-serif" font-size="24" font-weight="700" fill="#0a0b10">OC</text></svg>
+              </div>
+              <span id="text-opencode">OpenCode Go</span>
             </a>
             <a class="tile" id="link-supabase" href="https://supabase.com/" target="_blank" rel="noopener">
               <div class="icon"><svg><use href="#icon-supabase"></use></svg></div>
@@ -1750,7 +1751,7 @@
         cloudflare: { name: "Cloudflare", url: "https://dash.cloudflare.com/" },
         render: { name: "Render", url: "https://render.com/" },
         openrouter: { name: "OpenRouter", url: "https://openrouter.ai/" },
-        vercel: { name: "Vercel", url: "https://vercel.com/" },
+        opencode: { name: "OpenCode Go", url: "https://opencode.ai/console" },
         supabase: { name: "Supabase", url: "https://supabase.com/" },
         nous: { name: "Nous Portal", url: "https://portal.nousresearch.com/" },
         htmlviewer: { name: "HTML Viewer", url: "https://html.onlineviewer.net/" },
@@ -1796,10 +1797,34 @@
       chatgpt: 'https://chatgpt.com/', claude: 'https://claude.ai/'
     };
 
-    let currentConfig = JSON.parse(localStorage.getItem('aesthetic_newtab_config')) || JSON.parse(JSON.stringify(DEFAULT_CONFIG));
-    currentConfig.location ||= JSON.parse(JSON.stringify(DEFAULT_CONFIG.location));
-    currentConfig.links ||= JSON.parse(JSON.stringify(DEFAULT_CONFIG.links));
-    currentConfig.preferences ||= { temperatureUnit: "celsius", clockFormat: "24" };
+    // Load saved settings safely. Saved values are layered over the defaults, so
+    // damaged data can't break the page and new default tiles appear automatically.
+    // Links that no longer exist in the defaults (e.g. Vercel) are dropped.
+    function loadConfig() {
+      const config = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+      let saved = null;
+      try { saved = JSON.parse(localStorage.getItem('aesthetic_newtab_config')); } catch (error) {}
+
+      const location = saved?.location;
+      const isCoordinate = value => String(value ?? '').trim() !== '' && Number.isFinite(Number(value));
+      if (location && typeof location.city === 'string' && isCoordinate(location.lat) && isCoordinate(location.lon)) {
+        config.location = location;
+      }
+      if (['celsius', 'fahrenheit'].includes(saved?.preferences?.temperatureUnit)) {
+        config.preferences.temperatureUnit = saved.preferences.temperatureUnit;
+      }
+      if (['12', '24'].includes(saved?.preferences?.clockFormat)) {
+        config.preferences.clockFormat = saved.preferences.clockFormat;
+      }
+      for (const [key, link] of Object.entries(config.links)) {
+        const savedLink = saved?.links?.[key];
+        if (typeof savedLink?.name === 'string' && savedLink.name) link.name = savedLink.name;
+        if (typeof savedLink?.url === 'string' && savedLink.url) link.url = savedLink.url;
+      }
+      return config;
+    }
+
+    let currentConfig = loadConfig();
 
    // Migrate previous Kimi destinations to the requested international URL.
    // Only known old Kimi domains are changed; unrelated custom URLs are preserved.
@@ -1873,6 +1898,7 @@
       applyConfig();
       populateSettingsModal();
       populateDropdown();
+      restoreEngine();
       populateSlashMenu();
       setupEventListeners();
       setupImageFallbacks();
@@ -1944,10 +1970,10 @@
       });
     }
 
-    function populateSlashMenu() {
+    function populateSlashMenu(filter = '') {
       const menu = document.getElementById('slashMenu');
       menu.innerHTML = '';
-      SLASH_COMMANDS.forEach(cmd => {
+      SLASH_COMMANDS.filter(cmd => cmd.cmd.startsWith(filter)).forEach(cmd => {
         const div = document.createElement('div');
         div.className = 'slash-item';
         div.innerHTML = `<span class="cmd">/${cmd.cmd}</span> ${cmd.desc}`;
@@ -2100,7 +2126,17 @@
     const focusableElementsString = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
     let firstFocusableElement, lastFocusableElement;
 
+    let pendingLocation = null;  // detected, but not saved yet
+    let settingsSession = 0;     // lets late results from a closed window be ignored
+
     function openSettings() {
+      settingsSession++;
+      pendingLocation = null;
+      populateSettingsModal();
+      const saveBtn = document.getElementById('saveSettingsBtn');
+      saveBtn.textContent = 'Save & Apply';
+      saveBtn.disabled = false;
+      document.getElementById('location-status').textContent = 'Location access is optional. You can also enter a city manually.';
       modal.classList.add('active');
       const focusableContent = modal.querySelectorAll(focusableElementsString);
       firstFocusableElement = focusableContent[0];
@@ -2110,6 +2146,8 @@
     }
 
     function closeSettings() {
+      settingsSession++;
+      pendingLocation = null;
       modal.classList.remove('active');
       document.removeEventListener('keydown', trapFocus);
     }
@@ -2133,53 +2171,85 @@
       const status = document.getElementById('location-status');
       if (!navigator.geolocation) { status.textContent = "Geolocation is not supported by this browser."; return; }
       status.textContent = "Requesting location permission…";
+      const session = settingsSession;
       navigator.geolocation.getCurrentPosition(async position => {
+        if (session !== settingsSession) return;
         const { latitude, longitude } = position.coords;
         status.textContent = "Location found. Resolving city…";
         try {
           const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`);
+          if (!response.ok) throw new Error('Reverse geocoding failed');
           const data = await response.json();
+          if (session !== settingsSession) return;
           const cityName = data.city || data.locality || data.principalSubdivision || "Detected location";
           const city = [cityName, data.countryName].filter(Boolean).join(", ");
           document.getElementById('set-city').value = city;
-          currentConfig.location = { city, lat: latitude, lon: longitude };
+          pendingLocation = { city, lat: latitude, lon: longitude };
           status.textContent = `Detected: ${city}. Save settings to apply.`;
         } catch (error) {
+          if (session !== settingsSession) return;
           document.getElementById('set-city').value = "Detected location";
-          currentConfig.location = { city: "Detected location", lat: latitude, lon: longitude };
+          pendingLocation = { city: "Detected location", lat: latitude, lon: longitude };
           status.textContent = "Coordinates detected. Save settings to apply.";
         }
       }, error => {
+        if (session !== settingsSession) return;
         status.textContent = error.code === 1 ? "Location permission was denied. Enter a city manually." : "Could not detect location. Enter a city manually.";
       }, { enableHighAccuracy: false, timeout: 12000, maximumAge: 300000 });
     }
 
     async function saveSettings() {
       const saveBtn = document.getElementById('saveSettingsBtn');
+      const status = document.getElementById('location-status');
       const originalText = saveBtn.textContent;
       const newCity = document.getElementById('set-city').value.trim();
-      
-      if (newCity && newCity !== currentConfig.location.city) {
+      const session = settingsSession;
+      let newLocation = null;
+
+      if (pendingLocation && newCity === pendingLocation.city) {
+        newLocation = pendingLocation;
+      } else if (newCity && newCity !== currentConfig.location.city) {
         saveBtn.textContent = "Searching city...";
         saveBtn.disabled = true;
+        let problem = '';
 
         try {
-          const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(newCity)}&count=1&language=en&format=json`);
+          // The geocoder matches place names, so "Paris, France" is searched
+          // as "Paris" and the rest is used to pick the right result.
+          const [placeName, ...rest] = newCity.split(',').map(part => part.trim());
+          const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(placeName)}&count=10&language=en&format=json`);
+          if (!geoRes.ok) throw new Error(`Geocoding failed (${geoRes.status})`);
           const geoData = await geoRes.json();
-          
-          if (geoData.results && geoData.results.length > 0) {
-            currentConfig.location.city = newCity;
-            currentConfig.location.lat = geoData.results[0].latitude;
-            currentConfig.location.lon = geoData.results[0].longitude;
+          const qualifiers = rest.filter(Boolean).map(part => part.toLowerCase());
+          const match = (geoData.results || []).find(result => qualifiers.every(wanted =>
+            [result.country, result.country_code, result.admin1, result.admin2]
+              .some(field => String(field || '').toLowerCase() === wanted)
+          ));
+          if (match) {
+            newLocation = { city: newCity, lat: match.latitude, lon: match.longitude };
           } else {
-            alert("Could not find that city. Weather might not update.");
-            currentConfig.location.city = newCity;
+            problem = `Couldn't find "${newCity}". Check the spelling or try just the city name. Nothing has been saved.`;
           }
-        } catch (e) {
-          console.warn("Geocoding failed:", e);
-          currentConfig.location.city = newCity;
+        } catch (error) {
+          console.warn("Geocoding failed:", error);
+          problem = "Couldn't reach the city search. Nothing has been saved. Try again, or restore the previous city to save other changes.";
+        }
+
+        if (session !== settingsSession) return; // window was closed while searching
+        saveBtn.textContent = originalText;
+        saveBtn.disabled = false;
+        if (problem) {
+          status.textContent = problem;
+          status.scrollIntoView({ block: 'nearest' });
+          return;
         }
       }
+
+      if (newLocation) currentConfig.location = newLocation;
+      currentConfig.preferences = {
+        temperatureUnit: document.getElementById('temperature-unit').value,
+        clockFormat: document.getElementById('clock-format').value
+      };
 
       for (const key of Object.keys(currentConfig.links)) {
         const nameInput = document.getElementById('name-' + key);
@@ -2190,11 +2260,10 @@
         }
       }
 
-      localStorage.setItem('aesthetic_newtab_config', JSON.stringify(currentConfig));
+      try { localStorage.setItem('aesthetic_newtab_config', JSON.stringify(currentConfig)); } catch (error) {}
       applyConfig();
-      
-      saveBtn.textContent = originalText;
-      saveBtn.disabled = false;
+      updateClock();
+
       closeSettings();
     }
 
@@ -2214,6 +2283,15 @@
       document.getElementById('searchInput').placeholder = `Search ${name}...`;
       document.getElementById('engineDropdown').classList.remove('active');
       document.getElementById('searchInput').focus();
+      // Only dropdown picks come through here; slash commands stay temporary.
+      try { localStorage.setItem('nu_tab_engine', name); } catch (error) {}
+    }
+
+    function restoreEngine() {
+      let savedName = null;
+      try { savedName = localStorage.getItem('nu_tab_engine'); } catch (error) {}
+      const engine = ENGINES.find(item => item.name === savedName);
+      if (engine) setEngine(engine.name, engine.url);
     }
 
     function handleInput(val) {
@@ -2232,9 +2310,12 @@
         slashMenu.classList.toggle('active', matches.length > 0);
         slashIndex = -1;
       } else if (val.startsWith('/') || val.startsWith('>')) {
-        slashMenu.classList.add('active');
+        // Filter while the command is being typed; hide once its query starts.
+        const typed = val.slice(1).toLowerCase();
+        const isTypingCommand = !/\s/.test(typed);
+        if (isTypingCommand) populateSlashMenu(typed);
+        slashMenu.classList.toggle('active', isTypingCommand && slashMenu.children.length > 0);
         slashIndex = -1;
-        document.querySelectorAll('.slash-item').forEach(el => el.classList.remove('selected'));
       } else {
         slashMenu.classList.remove('active');
       }
@@ -2282,16 +2363,20 @@
         catch { input.value = "Unknown timezone. Try Tokyo, Sydney, London or New York."; }
         input.dataset.mode = ""; input.placeholder = "Search the web…"; return;
       }
-      if (raw.startsWith('>')) {
-        const command = raw.slice(1).trim().toLowerCase();
-        if (command === 'clear') { input.value = ''; return; }
-        if (command === 'weather') { updateWeather(); return; }
-        if (command === 'calc') { input.value = ''; input.dataset.mode = 'calc'; input.placeholder = 'Enter a calculation…'; return; }
-        if (command === 'time') { input.value = ''; input.dataset.mode = 'time'; input.placeholder = 'Enter a timezone…'; return; }
-        if (command === 'blackout') { enterBlackout(); return; }
-        if (command === 'help') { input.value = '/yt  /gh  /ai  /weather  /calc  /time  /clear'; return; }
-        const shortcutCommand = SLASH_COMMANDS.find(item => item.cmd === command);
-        if (shortcutCommand) { runSlashCommand(shortcutCommand.cmd, shortcutCommand.name, shortcutCommand.url, shortcutCommand.action); return; }
+      const typedCommand = raw.match(/^[\/>]\s*(\S+)\s*([\s\S]*)$/);
+      if (typedCommand) {
+        const command = typedCommand[1].toLowerCase();
+        const query = typedCommand[2].trim();
+        document.getElementById('slashMenu').classList.remove('active');
+        if (command === 'blackout') { input.value = ''; enterBlackout(); return; }
+        if (command === 'help') { input.value = SLASH_COMMANDS.map(item => '/' + item.cmd).join('  '); return; }
+        const found = SLASH_COMMANDS.find(item => item.cmd === command);
+        if (found) {
+          if (query && found.url) { window.location.href = found.url + encodeURIComponent(query); return; }
+          runSlashCommand(found.cmd, found.name, found.url, found.action);
+          if (query && (found.action === 'calc' || found.action === 'time')) { input.value = query; triggerSearch(); }
+          return;
+        }
       }
       if (raw.startsWith('@')) {
         const target = QUICK_SHORTCUTS[raw.slice(1).toLowerCase()];
@@ -2367,11 +2452,17 @@
       models.forEach(model => {
         const item = document.createElement('div');
         item.className = 'stealth-item';
-        item.innerHTML = `
-          <span class="stealth-name">${String(model.name ?? 'Unnamed model')}</span>
-          <span class="stealth-desc">${String(model.description ?? '')}</span>
-          <span class="stealth-platform">${String(model.platform ?? 'Unknown platform')}</span>
-        `;
+        // textContent keeps remote data as plain text, never as HTML.
+        [
+          ['stealth-name', model.name ?? 'Unnamed model'],
+          ['stealth-desc', model.description ?? ''],
+          ['stealth-platform', model.platform ?? 'Unknown platform']
+        ].forEach(([className, text]) => {
+          const span = document.createElement('span');
+          span.className = className;
+          span.textContent = String(text);
+          item.appendChild(span);
+        });
         fragment.appendChild(item);
       });
 
