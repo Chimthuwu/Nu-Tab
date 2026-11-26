@@ -1129,6 +1129,29 @@
       background: linear-gradient(to right, #000, #555, #fff);
     }
 
+    /* Touchscreens have no hover: keep the theme button visible and tappable. */
+    @media (hover: none) {
+      #theme-btn {
+        opacity: 1;
+        pointer-events: auto;
+        transform: scale(1);
+      }
+      #settings-btn, #theme-btn {
+        width: max(4.5vmin, 40px);
+        height: max(4.5vmin, 40px);
+        font-size: max(2.2vmin, 18px);
+      }
+      #theme-controls {
+        width: max(25vmin, 200px);
+      }
+      input[type=range]::-webkit-slider-runnable-track { height: max(0.6vmin, 6px); }
+      input[type=range]::-webkit-slider-thumb {
+        width: max(2vmin, 22px);
+        height: max(2vmin, 22px);
+        margin-top: -9px;
+      }
+    }
+
     /* ----- SETTINGS MODAL ----- */
     .modal-overlay {
       display: none;
@@ -2073,25 +2096,73 @@
       updatedLabel.textContent = 'NEXT 5 DAYS';
     }
 
-    async function updateWeather() {
-      const { lat, lon } = currentConfig.location;
-      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&forecast_days=5&timezone=auto`;
+    const WEATHER_CACHE_KEY = 'nu_tab_weather';
+    const WEATHER_CACHE_MAX_AGE = 3 * 60 * 60 * 1000;
+    let weatherRequestId = 0;
+
+    function renderWeather(data) {
+      const current = data.current;
+      const [emoji, conditionText] = WEATHER_CODES[current.weather_code] || ['🌡️','Current conditions'];
+      const useMph = currentConfig.preferences?.temperatureUnit === 'fahrenheit';
+      const windSpeed = useMph ? current.wind_speed_10m * 0.621371 : current.wind_speed_10m;
+      document.getElementById('weatherIcon').textContent = emoji;
+      document.getElementById('temperature').textContent = displayTemperature(current.temperature_2m);
+      document.getElementById('conditions').textContent = conditionText;
+      document.getElementById('feels').textContent = displayTemperature(current.apparent_temperature);
+      document.getElementById('wind').textContent = `${Math.round(windSpeed)} ${useMph ? 'mph' : 'km/h'}`;
+      document.getElementById('humidity').textContent = `${current.relative_humidity_2m}%`;
+      renderFiveDayForecast(data.daily);
+    }
+
+    // Returns the saved forecast only if it's for this place, recent and from today.
+    function readWeatherCache(place) {
       try {
-        const response = await fetch(url);
+        const cache = JSON.parse(localStorage.getItem(WEATHER_CACHE_KEY));
+        const isUsable = cache && cache.place === place &&
+          Date.now() - cache.savedAt < WEATHER_CACHE_MAX_AGE &&
+          new Date(cache.savedAt).toDateString() === new Date().toDateString();
+        return isUsable ? cache.data : null;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function showWeatherUnavailable() {
+      document.getElementById('weatherIcon').textContent = '🌡️';
+      document.getElementById('temperature').textContent = '--°';
+      document.getElementById('conditions').textContent = 'Weather unavailable';
+      document.getElementById('feels').textContent = '--°';
+      document.getElementById('wind').textContent = '--';
+      document.getElementById('humidity').textContent = '--%';
+      document.getElementById('forecastDays').innerHTML = '<div class="forecast-error">Could not load the forecast. Check your connection and try again.</div>';
+    }
+
+    async function updateWeather() {
+      const requestId = ++weatherRequestId;
+      const { lat, lon } = currentConfig.location;
+      const place = `${lat},${lon}`;
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&forecast_days=5&timezone=auto`;
+
+      // Show the saved forecast straight away, then refresh it.
+      let cached = readWeatherCache(place);
+      if (cached) {
+        try { renderWeather(cached); } catch (error) { cached = null; }
+      }
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
+      try {
+        const response = await fetch(url, { signal: controller.signal });
         if (!response.ok) throw new Error('Weather request failed');
         const data = await response.json();
-        const current = data.current;
-        const [emoji, conditionText] = WEATHER_CODES[current.weather_code] || ['🌡️','Current conditions'];
-        document.getElementById('weatherIcon').textContent = emoji;
-        document.getElementById('temperature').textContent = displayTemperature(current.temperature_2m);
-        document.getElementById('conditions').textContent = conditionText;
-        document.getElementById('feels').textContent = displayTemperature(current.apparent_temperature);
-        document.getElementById('wind').textContent = `${Math.round(current.wind_speed_10m)} km/h`;
-        document.getElementById('humidity').textContent = `${current.relative_humidity_2m}%`;
-        renderFiveDayForecast(data.daily);
+        if (requestId !== weatherRequestId) return; // a newer request replaced this one
+        renderWeather(data);
+        try { localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify({ place, savedAt: Date.now(), data })); } catch (error) {}
       } catch (error) {
-        document.getElementById('conditions').textContent = 'Weather unavailable';
-        document.getElementById('forecastDays').innerHTML = '<div class="forecast-error">Could not load the forecast. Check your connection and try again.</div>';
+        // Keep showing the saved forecast if there is one.
+        if (requestId === weatherRequestId && !cached) showWeatherUnavailable();
+      } finally {
+        clearTimeout(timeoutId);
       }
     }
 
@@ -2627,6 +2698,10 @@
             e.preventDefault();
             searchInput.focus();
           }
+        }
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+          closeSettings();
+          document.getElementById('settings-btn').focus();
         }
         if (e.key === 'Escape' && isBlackout) exitBlackout();
       });
